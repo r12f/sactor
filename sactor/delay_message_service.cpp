@@ -8,6 +8,7 @@ DelayMessageService::DelayMessageService()
     jobsLockHandle_ = xSemaphoreCreateMutexStatic(&jobsLockCtrl_);
     SACTOR_ENSURES(jobsLockHandle_ != nullptr);
 
+    scheduledTimerTick_ = xTaskGetTickCount();
     timerHandle_ = xTimerCreateStatic(
         "DelayMessageServiceTimer",
         1000, /* xTimerPeriod */
@@ -28,6 +29,9 @@ void DelayMessageService::TimerCallbackISR(_In_ TimerHandle_t timerHandle)
 
 void DelayMessageService::OnTimerISR()
 {
+    // Since our timer is one off shot timer, we reset the next scheduled timer tick to 0 whenever the timer is fired.
+    scheduledTimerTick_ = 0;
+
     TickType_t currentTick = xTaskGetTickCountFromISR();
 
     DelayMessageJob job;
@@ -186,11 +190,11 @@ void DelayMessageService::ScheduleTimer(_In_ TickType_t currentTick, _In_ bool f
 
     // If current scheduled tick is the same as the required one, don't do anything.
     TickType_t expiryTick = jobs_[0].ExpiryTick;
-    TickType_t newDeadlineTick = expiryTick < currentTick ? 1 : (expiryTick - currentTick);
-    if (newDeadlineTick == xTimerGetPeriod(timerHandle_)) {
+    if (expiryTick == scheduledTimerTick_) {
         return;
     }
 
+    TickType_t newDeadlineTick = expiryTick < currentTick ? 1 : (expiryTick - currentTick);
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE(this, newDeadlineTick);
     
     // Otherwise change the period and reset the timer.
@@ -205,6 +209,8 @@ void DelayMessageService::ScheduleTimer(_In_ TickType_t currentTick, _In_ bool f
         SACTOR_ENSURES(result == pdPASS);
     }
 
+    scheduledTimerTick_ = expiryTick;
+
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED(this, newDeadlineTick);
 }
 
@@ -218,6 +224,8 @@ void DelayMessageService::StopTimer(_In_ bool fromISR)
         BaseType_t result = xTimerStop(timerHandle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
         SACTOR_ENSURES(result == pdPASS);
     }
+
+    scheduledTimerTick_ = 0;
 
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_STOPPED(this);
 }

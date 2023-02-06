@@ -15,6 +15,7 @@ class DelayMessageService
 
     StaticTimer_t timerCtrl_;
     TimerHandle_t timerHandle_;
+    TickType_t scheduledTimerTick_;
 
     DelayMessageJob jobs_[SACTOR_DELAY_MESSAGE_SERVICE_MAX_ITEM_COUNT];
     int jobCount_;
