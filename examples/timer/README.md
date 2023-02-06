@@ -1,10 +1,10 @@
 # Example: timer
 
-This demo demos how to schedule delayed message back to the actor, so we can use this to implement things like timers and etc.
+This example examples how to schedule delayed message back to the actor, so we can use this to implement things like timers and etc.
 
 To compile it, please [install the PlatformIO core cli](https://docs.platformio.org/en/stable/core/index.html), then use the following commands to build or upload the program to your board.
 
-The demo is using [Seeed Xiao ESP32-C3](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/) as demo.
+The example is using [Seeed Xiao ESP32-C3](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/) as example.
 
 ```bash
 # Compile

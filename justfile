@@ -8,26 +8,26 @@ COLOR_NONE := '(ansi reset)'
 VERSION := '0.1.0'
 
 ROOT_DIR := replace(justfile_directory(), "\\", "/")
-DEMO_DIR := ROOT_DIR + "/demos"
+EXAMPLE_DIR := ROOT_DIR + "/examples"
 OUT_DIR := ROOT_DIR + "/outputs"
 RELEASE_PACKAGE := OUT_DIR + "/sactor-package" + "-" + VERSION + ".zip"
 
 set shell := ["nu", "-c"]
 
-build-demos:
-    just build-demo "blinky_hello"
-    just build-demo "actor_pool"
-    just build-demo "timer"
+build-examples:
+    just build-example "blinky_hello"
+    just build-example "actor_pool"
+    just build-example "timer"
 
-build-demo DEMO_NAME="blinky_hello":
-    @just _log-head "Building demo: {{DEMO_NAME}}"
-    @cd "{{DEMO_DIR}}/{{DEMO_NAME}}"; pio run
+build-example EXAMPLE_NAME="blinky_hello":
+    @just _log-head "Building example: {{EXAMPLE_NAME}}"
+    @cd "{{EXAMPLE_DIR}}/{{EXAMPLE_NAME}}"; pio run
 
-upload-demo DEMO_NAME="blinky_hello":
-    @cd "{{DEMO_DIR}}/{{DEMO_NAME}}"; pio run --target upload
+upload-example EXAMPLE_NAME="blinky_hello":
+    @cd "{{EXAMPLE_DIR}}/{{EXAMPLE_NAME}}"; pio run --target upload
 
 pack:
-    @cd "{{ROOT_DIR}}"; rm --force "{{RELEASE_PACKAGE}}"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./sactor"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./LICENSE"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./README.md";
+    @cd "{{ROOT_DIR}}"; rm --force "{{RELEASE_PACKAGE}}"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./src"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./LICENSE"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./README.md"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./library.*"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./examples";
 
 #
 # Utility tasks

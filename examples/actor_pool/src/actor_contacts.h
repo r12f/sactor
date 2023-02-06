@@ -1,11 +1,7 @@
 #pragma once
 
-#include "sactor/sactor.h"
+#include "sactor.h"
 #include "driver/gpio.h"
-
-DECLARE_MESSAGE_ID_BEGIN(ActorSchedulerImpl)
-    MESSAGE_ID(ActorSchedulerImpl, ScheduleTimerMessage)
-DECLARE_MESSAGE_ID_END()
 
 DECLARE_MESSAGE_ID_BEGIN(ActorLedCtrlImpl)
     MESSAGE_ID(ActorLedCtrlImpl, ControlMessage)

@@ -1,10 +1,10 @@
 # Example: actor-pool
 
-This demo demos multiple actor listening to the same queue to form a worker pool. The requests will be handled by all actors listening to the queue.
+This example examples multiple actor listening to the same queue to form a worker pool. The requests will be handled by all actors listening to the queue.
 
 To compile it, please [install the PlatformIO core cli](https://docs.platformio.org/en/stable/core/index.html), then use the following commands to build or upload the program to your board.
 
-The demo is using [Seeed Xiao ESP32-C3](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/) as demo.
+The example is using [Seeed Xiao ESP32-C3](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/) as example.
 
 ```bash
 # Compile

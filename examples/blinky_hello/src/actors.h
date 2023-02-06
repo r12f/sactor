@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdio.h>
-#include "sactor/sactor.h"
+#include "sactor.h"
 #include "actor_contacts.h"
 
 class ActorHelloImpl : public ActorImpl
