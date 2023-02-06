@@ -43,6 +43,10 @@
         case MESSAGE_ID(ActorType, MessageType): \
             return this->HandlerFunc((const MessageType*)message);
 
+#define ON_MESSAGE_NO_PAYLOAD(ActorType, HandlerFunc, MessageType) \
+        case MESSAGE_ID(ActorType, MessageType): \
+            return this->HandlerFunc();
+
 #define MESSAGE_MAP_END() \
         } \
         return SactorError_NoError; \

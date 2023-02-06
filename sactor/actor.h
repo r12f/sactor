@@ -41,6 +41,7 @@ protected:
         : mailbox_(mailbox)
         , worker_(mailbox, impl_)
     {
+        impl_.mailbox_ = &mailbox;
         SACTOR_TRACE_ACTOR_CREATED(T::Name, this);
     }
 };
@@ -69,6 +70,11 @@ public:
 
 class ActorImpl
 {
+    template <class T>
+    friend class ActorCommon;
+
+    ActorMailbox* mailbox_;
+
 public:
     static constexpr const char* Name = "actor";
     static constexpr uint32_t StackWordCount = 2048;
@@ -78,6 +84,9 @@ public:
     SactorError ProcessIncomingMessage(_In_ BaseType_t messageId, _In_opt_ void* message, _In_opt_ void* messageReply) {
         return SactorError_NoError;
     }
+
+protected:
+    SactorError QueueDelayedMessage(_In_ BaseType_t messageId, _In_ uint32_t delayInMs);
 };
 
 #endif

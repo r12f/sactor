@@ -82,7 +82,7 @@ SactorError ActorMailbox::Rx::DispatchOneMessage(_In_ OnMessageFunc onMessage, _
 {
     MailboxItem mailboxItem;
     SactorError result = queue_.Rx().Receive(&mailboxItem, SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS);
-    if (result == SactorError_MailboxEmpty) {
+    if (result == SactorError_QueueEmpty) {
         return result;
     }
 
@@ -102,6 +102,11 @@ ActorMailbox::ActorMailbox(_In_ const char* actorName, _In_ uint8_t* queueBuffer
     , rx_(actorName, *this)
 {
     SACTOR_TRACE_ACTOR_MAILBOX_CREATED(actorName, this);
+}
+
+const char* ActorMailbox::GetActorName() const
+{
+    return actorName_;
 }
 
 typename ActorMailbox::Tx& ActorMailbox::Tx()

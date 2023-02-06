@@ -8,12 +8,14 @@
 
 enum SactorError {
     SactorError_NoError = 0,
+    SactorError_Failed,
+    SactorError_Timeout,
     
     // Mailbox errors
-    SactorError_MailboxUnknown = 1000,
-    SactorError_MailboxInvalid,
-    SactorError_MailboxEmpty,
-    SactorError_MailboxFull,
+    SactorError_QueueUnknownError = 1000,
+    SactorError_QueueInvalid,
+    SactorError_QueueEmpty,
+    SactorError_QueueFull,
     
     // Actor worker thread error
     SactorError_TaskStopped,

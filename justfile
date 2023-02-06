@@ -14,15 +14,16 @@ RELEASE_PACKAGE := OUT_DIR + "/sactor-package" + "-" + VERSION + ".zip"
 
 set shell := ["nu", "-c"]
 
-build:
-    just build-example "blinky-hello"
-    just build-example "actor-pool"
+build-all:
+    just build "blinky_hello"
+    just build "actor_pool"
+    just build "delayed_message"
 
-build-example EXAMPLE_NAME:
+build EXAMPLE_NAME="blinky_hello":
     @just _log-head "Building example: {{EXAMPLE_NAME}}"
     @cd "{{EXAMPLE_DIR}}/{{EXAMPLE_NAME}}"; pio run
 
-upload EXAMPLE_NAME:
+upload EXAMPLE_NAME="blinky_hello":
     @cd "{{EXAMPLE_DIR}}/{{EXAMPLE_NAME}}"; pio run --target upload
 
 pack:

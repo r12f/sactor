@@ -148,7 +148,7 @@ Turning off the LED
 Hello world! LED = Off
 ```
 
-For the end result, please check this example: <https://github.com/r12f/sactor/tree/main/examples/blinky-hello>.
+For the end result, please check this example: <https://github.com/r12f/sactor/tree/main/examples/blinky_hello>.
 
 ## Design principles
 
@@ -158,7 +158,7 @@ If you are interested more on why Sactor is build in this way, here are more det
 
 Sactor is trying the best to make resource usage clear in compile time by leveraging `*Static` APIs in FreeRTOS to create resources, such as Queues. This helps us finding memory problem early and reduce the risk of heap fragmentation problem to get more stable memory usage in the long run.
 
-For example, here is the memory usage before bumping 3 actor stack size from 2048 * 8 bytes to 20480 * 8 bytes.
+For example, here is the memory usage before bumping the actor stack size from 2048 words (* 4 bytes) to 20480 words (* 4 bytes). In this case, we can see the RAM usage increased 18432 bytes, which matches what we changed.
 
 ```
 Checking size .pio\build\seeed_xiao_esp32c3\firmware.elf

@@ -1,11 +1,6 @@
 #ifndef SACTOR_DEBUG_H
 #define SACTOR_DEBUG_H
 
-#define SACTOR_ASSERT(cond) configASSERT(cond)
-#define SACTOR_REQUIRES(cond) SACTOR_ASSERT(cond)
-#define SACTOR_ENSURES(cond) SACTOR_ASSERT(cond)
-#define SACTOR_UNREACHABLE() SACTOR_ASSERT(false)
-
 #ifndef _In_
 #define _In_
 #endif
@@ -89,7 +84,7 @@
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_CREATED
 #define SACTOR_TRACE_ACTOR_MAILBOX_CREATED(Name, Pointer) \
-    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, "Actor mailbox started.")
+    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, "Actor mailbox created.")
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE
@@ -106,5 +101,72 @@
 #define SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(Name, Pointer, MessageId, MessageBuffer, ReplyBuffer) \
     SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, "Actor mailbox on message completed: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
 #endif
+
+//
+// Delay message service
+//
+#define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, Format, ...) \
+    SACTOR_TRACE_LOG("DMS", "DMS", Pointer, Format, ##__VA_ARGS__)
+
+#ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATE
+#define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATE(Pointer) \
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Creating delay message service.")
+#endif
+
+#ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATED
+#define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATED(Pointer) \
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service created.")
+#endif
+
+#ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUE
+#define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUE(Pointer, ActorName, ActorMailbox, MessageId, DelayInMs) \
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service queuing delayed message: Actor = %s, Mailbox = %p, MessageId = %d, Delay = %ld ms.", ActorName, ActorMailbox, MessageId, DelayInMs)
+#endif
+
+#ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUED
+#define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUED(Pointer, ActorName, ActorMailbox, MessageId, DelayInMs) \
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service delayed message queued: Actor = %s, Mailbox = %p, MessageId = %d, Delay = %ld ms.", ActorName, ActorMailbox, MessageId, DelayInMs)
+#endif
+
+#ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOCK_TAKE_TIMEOUT
+#define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOCK_TAKE_TIMEOUT(Pointer) \
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service take lock timeout.")
+#endif
+
+#ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE
+#define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE(Pointer, NewPeriod) \
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service scheduling timer: NewPeriod = %ld ms.", NewPeriod)
+#endif
+
+#ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED
+#define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED(Pointer, NewPeriod) \
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service timer scheduled: NewPeriod = %ld ms.", NewPeriod)
+#endif
+
+#ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_STOP
+#define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_STOP(Pointer) \
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service stopping timer.");
+#endif
+
+#ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_STOPPED
+#define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_STOPPED(Pointer) \
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service timer stopped.");
+#endif
+
+//
+// Design by contract assertions
+//
+#define SACTOR_ASSERT(AssertType, cond) do { \
+    bool r = (cond); \
+    if (!r) { \
+        SACTOR_TRACE_LOG("Assert", AssertType, nullptr, "Assertion failed: %s", #cond); \
+        configASSERT(false); \
+    } \
+} while (0)
+
+#define SACTOR_REQUIRES(cond) SACTOR_ASSERT("Requires", cond)
+#define SACTOR_ENSURES(cond) SACTOR_ASSERT("Ensures", cond)
+#define SACTOR_UNREACHABLE() SACTOR_ASSERT("Unreachable", false)
+
 
 #endif
