@@ -29,6 +29,9 @@ upload-example EXAMPLE_NAME="blinky_hello":
 pack:
     @cd "{{ROOT_DIR}}"; rm --force "{{RELEASE_PACKAGE}}"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./src"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./LICENSE"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./README.md"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./library.*"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./examples";
 
+publish:
+    pio pkg publish
+
 #
 # Utility tasks
 #
