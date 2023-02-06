@@ -72,8 +72,8 @@
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_WORKER_THREAD_STARTED
-#define SACTOR_TRACE_ACTOR_WORKER_THREAD_STARTED(Name, Pointer, Result, Handle) \
-    SACTOR_TRACE_ACTOR_WORKER_LOG(Name, Pointer, "Actor worker thread started: Result = %d, Handle = %p.", Result, Handle)
+#define SACTOR_TRACE_ACTOR_WORKER_THREAD_STARTED(Name, Pointer, Handle) \
+    SACTOR_TRACE_ACTOR_WORKER_LOG(Name, Pointer, "Actor worker thread started: Handle = %p.", Handle)
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_WORKER_THREAD_TASK_LOOP_ENTERED

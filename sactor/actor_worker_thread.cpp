@@ -22,21 +22,21 @@ ActorMailbox& ActorWorkerThreadBase::GetMailbox()
     return mailbox_;
 }
 
-void ActorWorkerThreadBase::StartWithParams(_In_ uint32_t stackWordCount, _In_ UBaseType_t priority)
+void ActorWorkerThreadBase::StartWithParams(_In_ uint32_t stackWordCount, _In_ StackType_t* stackBuffer, _In_ UBaseType_t priority)
 {
     SACTOR_TRACE_ACTOR_WORKER_THREAD_START(name_, this);
 
-    BaseType_t taskCreateResult = xTaskCreate(
+    task_ = xTaskCreateStatic(
         &ActorWorkerThreadBase::ActorWorkerTaskProc,
         name_,
         stackWordCount,
         (void*)this,
         priority,
-        &task_);
+        stackBuffer,
+        &taskCtrl_);
 
-    SACTOR_TRACE_ACTOR_WORKER_THREAD_STARTED(name_, this, taskCreateResult, task_);
+    SACTOR_TRACE_ACTOR_WORKER_THREAD_STARTED(name_, this, task_);
 
-    SACTOR_ENSURES(taskCreateResult == pdPASS);
     SACTOR_ENSURES(task_ != nullptr);
 }
 

@@ -10,6 +10,7 @@ class ActorWorkerThreadBase
 {
     const char* name_;
     TaskHandle_t task_;
+    StaticTask_t taskCtrl_;
     ActorMailbox& mailbox_;
     ActorMailbox::Rx::OnMessageFunc onMessage_;
     void* onMessageParam_;
@@ -22,7 +23,7 @@ protected:
 
     ActorMailbox& GetMailbox();
 
-    void StartWithParams(_In_ uint32_t stackWordCount, _In_ UBaseType_t priority);
+    void StartWithParams(_In_ uint32_t stackWordCount, _In_ StackType_t* stackBuffer, _In_ UBaseType_t priority);
 
 private:
     static void ActorWorkerTaskProc(_In_ void* parameter);
@@ -32,6 +33,7 @@ private:
 template <class T>
 class ActorWorkerThread : public ActorWorkerThreadBase
 {
+    StackType_t stackBuffer_[T::StackWordCount];
     T& actorImpl_;
 
 public:
@@ -43,7 +45,7 @@ public:
     }
 
     void Start() { 
-        StartWithParams(T::StackWordCount, T::Priority);
+        StartWithParams(T::StackWordCount, stackBuffer_, T::Priority);
         GetMailbox().Tx().SendAsync(MESSAGE_ID_INIT);
     }
 
