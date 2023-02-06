@@ -43,7 +43,7 @@ public:
     private:
         // ActorMailboxTx can only be created by ActorMailbox.
         friend class ActorMailbox;
-        Tx(_In_ ActorMailbox& mailbox);
+        Tx(const char* actorName, _In_ ActorMailbox& mailbox);
 
         SactorError SendRecvSyncRaw(_In_ BaseType_t messageId, _In_opt_ const void* messageBuffer, _Out_opt_ void* replyBuffer);
         SactorError QueueRequestRaw(_In_ const MailboxItem& mailboxItem);
@@ -62,7 +62,7 @@ public:
     private:
         // ActorMailboxRx can only be created by ActorMailbox.
         friend class ActorMailbox;
-        Rx(_In_ ActorMailbox& mailbox);
+        Rx(_In_ const char* actorName, _In_ ActorMailbox& mailbox);
     };
 
 private:

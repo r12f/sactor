@@ -94,17 +94,17 @@
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE
 #define SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(Name, Pointer, MessageId, MessageBuffer, ReplyBuffer) \
-    SACTOR_TRACE_ACTOR_WORKER_LOG(Name, Pointer, "Actor mailbox queuing message: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
+    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, "Actor mailbox queuing message: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE
 #define SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE(Name, Pointer, MessageId, MessageBuffer, ReplyBuffer) \
-    SACTOR_TRACE_ACTOR_WORKER_LOG(Name, Pointer, "Actor mailbox on message: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
+    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, "Actor mailbox on message: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED
 #define SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(Name, Pointer, MessageId, MessageBuffer, ReplyBuffer) \
-    SACTOR_TRACE_ACTOR_WORKER_LOG(Name, Pointer, "Actor mailbox on message completed: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
+    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, "Actor mailbox on message completed: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
 #endif
 
 #endif

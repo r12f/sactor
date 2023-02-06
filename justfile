@@ -16,6 +16,7 @@ set shell := ["nu", "-c"]
 
 build:
     just build-example "blinky-hello"
+    just build-example "actor-pool"
 
 build-example EXAMPLE_NAME:
     @just _log-head "Building example: {{EXAMPLE_NAME}}"

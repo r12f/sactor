@@ -41,8 +41,9 @@ void ActorMailbox::MailboxItem::MarkCompleted()
     xTaskAbortDelay(SenderTask);
 }
 
-ActorMailbox::Tx::Tx(_In_ ActorMailbox& mailbox)
-    : queue_(mailbox.queue_)
+ActorMailbox::Tx::Tx(_In_ const char* actorName, _In_ ActorMailbox& mailbox)
+    : actorName_(actorName)
+    , queue_(mailbox.queue_)
 {}
 
 SactorError ActorMailbox::Tx::SendAsync(_In_ BaseType_t messageId)
@@ -72,8 +73,9 @@ SactorError ActorMailbox::Tx::QueueRequestRaw(_In_ const MailboxItem& mailboxIte
     return queue_.Tx().Send((void *)&mailboxItem);
 }
 
-ActorMailbox::Rx::Rx(_In_ ActorMailbox& mailbox)
-    : queue_(mailbox.queue_)
+ActorMailbox::Rx::Rx(_In_ const char* actorName, _In_ ActorMailbox& mailbox)
+    : actorName_(actorName)
+    , queue_(mailbox.queue_)
 {}
 
 SactorError ActorMailbox::Rx::DispatchOneMessage(_In_ OnMessageFunc onMessage, _In_ void* parameter)
@@ -96,8 +98,8 @@ SactorError ActorMailbox::Rx::DispatchOneMessage(_In_ OnMessageFunc onMessage, _
 ActorMailbox::ActorMailbox(_In_ const char* actorName, _In_ uint8_t* queueBuffer, uint32_t itemCount)
     : actorName_(actorName)
     , queue_(queueBuffer, itemCount)
-    , tx_(*this)
-    , rx_(*this)
+    , tx_(actorName, *this)
+    , rx_(actorName, *this)
 {
     SACTOR_TRACE_ACTOR_MAILBOX_CREATED(actorName, this);
 }
