@@ -1,4 +1,4 @@
-# Example: delayed message
+# Example: timer
 
 This example demos how to schedule delayed message back to the actor, so we can use this to implement things like timers and etc.
 

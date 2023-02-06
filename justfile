@@ -17,7 +17,7 @@ set shell := ["nu", "-c"]
 build-all:
     just build "blinky_hello"
     just build "actor_pool"
-    just build "delayed_message"
+    just build "timer"
 
 build EXAMPLE_NAME="blinky_hello":
     @just _log-head "Building example: {{EXAMPLE_NAME}}"
