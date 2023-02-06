@@ -122,6 +122,8 @@ SactorError ActorBlinkyImpl::OnInit()
 
 Once they are done, in our main function, we can simply include the `actors.h` file and start them all.
 
+> Note: Sactor also supports timers, for more details, please check example here: <https://github.com/r12f/sactor/blob/main/examples/timer/src/actors.cpp>.
+
 ```c++
 #include "actors.h"
 
