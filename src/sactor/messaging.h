@@ -1,7 +1,7 @@
 #ifndef SACTOR_MESSAGING_H
 #define SACTOR_MESSAGING_H
 
-#include "common.h"
+#include "sactor/common.h"
 
 #define DECLARE_MESSAGE_ID_BEGIN(ActorType) \
     enum ActorMessageId_ ## ActorType { \

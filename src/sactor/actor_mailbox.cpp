@@ -1,4 +1,4 @@
-#include "actor_mailbox.h"
+#include "sactor/actor_mailbox.h"
 
 ActorMailbox::MailboxItem::MailboxItem()
     : MailboxItem(0, nullptr, nullptr, nullptr)

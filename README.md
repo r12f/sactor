@@ -14,7 +14,7 @@ There are a few ways to install sactor to your projects:
 2. Download the package from release page, and unzip it to your `lib` folder.
 3. Use `git submodule` to add this project as submodule under your `lib` folder.
 
-Feel free to check the examples folder to see how the end result looks like.
+Feel free to check the demos folder to see how the end result looks like.
 
 ### Example
 
@@ -122,7 +122,7 @@ SactorError ActorBlinkyImpl::OnInit()
 
 Once they are done, in our main function, we can simply include the `actors.h` file and start them all.
 
-> Note: Sactor also supports timers, for more details, please check example here: <https://github.com/r12f/sactor/blob/main/examples/timer/src/actors.cpp>.
+> Note: Sactor also supports timers, for more details, please check demo here: <https://github.com/r12f/sactor/blob/main/demos/timer/src/actors.cpp>.
 
 ```c++
 #include "actors.h"
@@ -150,7 +150,7 @@ Turning off the LED
 Hello world! LED = Off
 ```
 
-For the end result, please check this example: <https://github.com/r12f/sactor/tree/main/examples/blinky_hello>.
+For the end result, please check this demo: <https://github.com/r12f/sactor/tree/main/demos/blinky_hello>.
 
 ## Design principles
 
@@ -160,7 +160,7 @@ If you are interested more on why Sactor is build in this way, here are more det
 
 Sactor is trying the best to make resource usage clear in compile time by leveraging `*Static` APIs in FreeRTOS to create resources, such as Queues. This helps us finding memory problem early and reduce the risk of heap fragmentation problem to get more stable memory usage in the long run.
 
-For example, here is the memory usage before bumping the actor stack size from 2048 words (* 4 bytes) to 20480 words (* 4 bytes). In this case, we can see the RAM usage increased 18432 bytes, which matches what we changed.
+For demo, here is the memory usage before bumping the actor stack size from 2048 words (* 4 bytes) to 20480 words (* 4 bytes). In this case, we can see the RAM usage increased 18432 bytes, which matches what we changed.
 
 ```
 Checking size .pio\build\seeed_xiao_esp32c3\firmware.elf

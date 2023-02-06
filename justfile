@@ -8,23 +8,23 @@ COLOR_NONE := '(ansi reset)'
 VERSION := '0.1.0'
 
 ROOT_DIR := replace(justfile_directory(), "\\", "/")
-EXAMPLE_DIR := ROOT_DIR + "/examples"
+DEMO_DIR := ROOT_DIR + "/demos"
 OUT_DIR := ROOT_DIR + "/outputs"
 RELEASE_PACKAGE := OUT_DIR + "/sactor-package" + "-" + VERSION + ".zip"
 
 set shell := ["nu", "-c"]
 
-build-all:
-    just build "blinky_hello"
-    just build "actor_pool"
-    just build "timer"
+build-demos:
+    just build-demo "blinky_hello"
+    just build-demo "actor_pool"
+    just build-demo "timer"
 
-build EXAMPLE_NAME="blinky_hello":
-    @just _log-head "Building example: {{EXAMPLE_NAME}}"
-    @cd "{{EXAMPLE_DIR}}/{{EXAMPLE_NAME}}"; pio run
+build-demo DEMO_NAME="blinky_hello":
+    @just _log-head "Building demo: {{DEMO_NAME}}"
+    @cd "{{DEMO_DIR}}/{{DEMO_NAME}}"; pio run
 
-upload EXAMPLE_NAME="blinky_hello":
-    @cd "{{EXAMPLE_DIR}}/{{EXAMPLE_NAME}}"; pio run --target upload
+upload-demo DEMO_NAME="blinky_hello":
+    @cd "{{DEMO_DIR}}/{{DEMO_NAME}}"; pio run --target upload
 
 pack:
     @cd "{{ROOT_DIR}}"; rm --force "{{RELEASE_PACKAGE}}"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./sactor"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./LICENSE"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./README.md";

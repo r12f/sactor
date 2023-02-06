@@ -1,0 +1,25 @@
+{
+    "name": "Sactor",
+    "version": "0.1.0",
+    "description": "A light-weighted actor model framework based on FreeRTOS, designed for small IoT devices such as MCUs.",
+    "keywords": "actor, FreeRTOS, rtos",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/r12f/sactor.git"
+    },
+    "authors":
+    [
+      {
+        "name": "r12f",
+        "email": "r12f.code@gmail.com",
+        "url": "https://r12f.com"
+      }
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/r12f/sactor",
+    "dependencies": {
+    },
+    "frameworks": "*",
+    "platforms": "*"
+  }

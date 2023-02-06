@@ -1,4 +1,4 @@
-#include "static_message_queue.h"
+#include "sactor/static_message_queue.h"
 
 StaticMessageQueueTx::StaticMessageQueueTx()
     : queue_(nullptr)

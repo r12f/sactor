@@ -1,4 +1,4 @@
-#include "actor_worker_thread.h"
+#include "sactor/actor_worker_thread.h"
 
 ActorWorkerThreadBase::ActorWorkerThreadBase(_In_ const char* name, _In_ ActorMailbox& mailbox, _In_ ActorMailbox::Rx::OnMessageFunc onMessage, _In_ void* onMessageParam)
     : name_(name)
