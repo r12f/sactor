@@ -27,11 +27,11 @@ First, we define the contract between these 2 actors. We need to define the mess
 
 #include "sactor/sactor.h"
 
-DECLARE_MESSAGE_ID_BEGIN(ActorHello)
-    MESSAGE_ID(ActorHello, HelloMessage)
+DECLARE_MESSAGE_ID_BEGIN(ActorHelloImpl)
+    MESSAGE_ID(ActorHelloImpl, HelloMessage)
 DECLARE_MESSAGE_ID_END()
 
-DECLARE_MESSAGE_BEGIN(ActorHello, HelloMessage)
+DECLARE_MESSAGE_BEGIN(ActorHelloImpl, HelloMessage)
     bool IsOn;
 DECLARE_MESSAGE_END()
 ```
@@ -53,7 +53,7 @@ public:
     static constexpr const char* Name = "ActorHello";
 
     MESSAGE_MAP_BEGIN()
-        ON_MESSAGE_NO_REPLY(ActorHello, OnHello, HelloMessage)
+        ON_MESSAGE_NO_REPLY(ActorHelloImpl, OnHello, HelloMessage)
     MESSAGE_MAP_END()
 
 private:
@@ -156,9 +156,29 @@ If you are interested more on why Sactor is build in this way, here are more det
 
 ### 1. No dynamic allocation
 
-Sactor is trying the best to make resource usage clear in compile time by leveraging *Static APIs in FreeRTOS to create resources, such as Queues. This helps us reduce the risk of heap fragmentation problem to get more stable memory usage in the long run.
+Sactor is trying the best to make resource usage clear in compile time by leveraging `*Static` APIs in FreeRTOS to create resources, such as Queues. This helps us finding memory problem early and reduce the risk of heap fragmentation problem to get more stable memory usage in the long run.
 
-Just like normal Actor model, actors talking to each other via messages, which usually requires dynamic allocations. So our messaging system is designed with this principle in mind. It works like IPC in microkernel. The message and reply buffers are allocated by the sender/client side, and all data structures used internally are either allocated on preallocated buffer, such as queue, or on the stack.
+For example, here is the memory usage before bumping 3 actor stack size from 2048 * 8 bytes to 20480 * 8 bytes.
+
+```
+Checking size .pio\build\seeed_xiao_esp32c3\firmware.elf
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [=         ]   6.5% (used 21200 bytes from 327680 bytes)
+Flash: [==        ]  15.3% (used 160008 bytes from 1048576 bytes)
+Building .pio\build\seeed_xiao_esp32c3\firmware.bin
+```
+
+And here is after the bump, we can see the RAM usage increases in the post compile analysis for the firmware.
+
+```
+Checking size .pio\build\seeed_xiao_esp32c3\firmware.elf
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [=         ]  12.1% (used 39632 bytes from 327680 bytes)
+Flash: [==        ]  15.3% (used 160006 bytes from 1048576 bytes)
+Building .pio\build\seeed_xiao_esp32c3\firmware.bin
+```
+
+Additionally, just like normal Actor model, actors talking to each other via messages, which usually requires dynamic allocations. So our messaging system is designed with this principle in mind. It works like IPC in microkernel. The message and reply buffers are allocated by the sender/client side, and all data structures used internally are either allocated on preallocated buffer, such as queue, or on the stack.
 
 ### 2. Try to be as light-weighted as possible
 

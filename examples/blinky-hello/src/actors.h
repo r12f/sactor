@@ -10,7 +10,7 @@ public:
     static constexpr const char* Name = "ActorHello";
 
     MESSAGE_MAP_BEGIN()
-        ON_MESSAGE_NO_REPLY(ActorHello, OnHello, HelloMessage)
+        ON_MESSAGE_NO_REPLY(ActorHelloImpl, OnHello, HelloMessage)
     MESSAGE_MAP_END()
 
 private:

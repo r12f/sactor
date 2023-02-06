@@ -8,6 +8,7 @@ class ActorSchedulerImpl : public ActorImpl
 {
 public:
     static constexpr const char* Name = "ActorScheduler";
+    static constexpr uint32_t StackWordCount = 2048;
 
     MESSAGE_MAP_BEGIN()
         ON_INIT_MESSAGE(ActorSchedulerImpl, OnInit)
