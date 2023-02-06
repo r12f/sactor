@@ -1,8 +1,14 @@
 #ifndef SACTOR_COMMON_H
 #define SACTOR_COMMON_H
 
-#include <memory>
+#ifndef SACTOR_USE_CUSTOM_FREERTOS
 #include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/timers.h"
+#include "freertos/semphr.h"
+#include "freertos/queue.h"
+#endif
+
 #include "sactor/config.h"
 #include "sactor/debug.h"
 

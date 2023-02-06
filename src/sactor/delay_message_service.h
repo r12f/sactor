@@ -2,8 +2,6 @@
 #define SACTOR_DELAY_MESSAGE_SERVICE_H
 
 #include "sactor/actor_mailbox.h"
-#include "freertos/timers.h"
-#include "freertos/semphr.h"
 
 class DelayMessageService
 {

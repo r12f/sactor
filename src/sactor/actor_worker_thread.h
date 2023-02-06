@@ -2,7 +2,6 @@
 #define LACTOR_ACTOR_DRIVER_H
 
 #include "sactor/common.h"
-#include "freertos/task.h"
 #include "sactor/actor_mailbox.h"
 #include "sactor/messaging.h"
 

@@ -2,7 +2,6 @@
 #define SACTOR_STATIC_MESSAGE_QUEUE_H
 
 #include "sactor/common.h"
-#include "freertos/queue.h"
 
 template <class ItemType>
 class StaticMessageQueue;
