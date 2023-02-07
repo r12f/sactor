@@ -20,6 +20,16 @@ There are a few ways to install sactor to your projects:
 
 Feel free to check the examples folder to see how the end result looks like.
 
+### Include
+
+To start using sactor simply include the sactor.h file as below:
+
+```c++
+#include "sactor.h"
+```
+
+For more detailed info, please check the example below and final result here: <https://github.com/r12f/sactor/tree/main/examples/blinky_hello>.
+
 ### Example
 
 Let's say we like to create an app, where 1 thread switch the LED on and off every 1 second, and send the status to the another thread for reporting (printf in this case). So, we need 2 actors in this case, one blinky to switch the LED and one hello to report the status.
@@ -32,7 +42,7 @@ First, we define the contract between these 2 actors. We need to define the mess
 #include "sactor.h"
 
 DECLARE_MESSAGE_ID_BEGIN(ActorHelloImpl)
-    MESSAGE_ID(ActorHelloImpl, HelloMessage)
+    DECLARE_MESSAGE_ID(ActorHelloImpl, HelloMessage)
 DECLARE_MESSAGE_ID_END()
 
 DECLARE_MESSAGE_BEGIN(ActorHelloImpl, HelloMessage)
@@ -205,6 +215,7 @@ To help debugging, Sactor leverages a few debug infras:
 - Design-By-Contract enabled assertions.
 - Macros for tracing points for customize debugging infra when needed.
 
+The debug infra is defined here: <https://github.com/r12f/sactor/blob/main/src/sactor/debug.h>.
 
 ## License
 
