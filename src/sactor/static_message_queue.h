@@ -27,7 +27,7 @@ class StaticMessageQueueRx
 
 public:
     StaticMessageQueueRx();
-    SactorError Receive(_Out_ void* item, _In_ TickType_t timeoutMs = 0);
+    SactorError Receive(_Out_ void* item, _In_ TickType_t timeout_ms = 0);
     SactorError ReceiveFromISR(_Out_ void* item);
 
 private:
@@ -41,16 +41,16 @@ class StaticMessageQueue
 {
     QueueHandle_t queue_;
 
-    StaticQueue_t queueCtrl_;
-    uint8_t* queueBuffer_;
+    StaticQueue_t queue_ctrl_;
+    uint8_t* queue_buffer_;
 
     StaticMessageQueueTx tx_;
     StaticMessageQueueRx rx_;
 
 public:
-    StaticMessageQueue(uint8_t* queueBuffer, uint32_t itemCount) {
-        queueBuffer_ = queueBuffer;
-        queue_ = xQueueCreateStatic(itemCount, sizeof(ItemType), queueBuffer, &queueCtrl_);
+    StaticMessageQueue(uint8_t* queue_buffer, uint32_t item_count) {
+        queue_buffer_ = queue_buffer;
+        queue_ = xQueueCreateStatic(item_count, sizeof(ItemType), queue_buffer, &queue_ctrl_);
         SACTOR_ENSURES(queue_ != nullptr);
 
         tx_.SetQueueHandle(queue_);

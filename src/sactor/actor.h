@@ -32,8 +32,8 @@ public:
         return mailbox_.Tx().SendRecvSync(message, reply);
     }
 
-    SactorError SendAsync(_In_ BaseType_t messageId) {
-        return mailbox_.Tx().SendAsync(messageId);
+    SactorError SendAsync(_In_ BaseType_t message_id) {
+        return mailbox_.Tx().SendAsync(message_id);
     }
 
 protected:
@@ -49,13 +49,13 @@ protected:
 template <class T>
 class Actor : public ActorCommon<T>
 {
-    ActorMailbox mailboxImpl_;
-    uint8_t mailboxQueueBuffer[ActorMailbox::ItemSize * T::QueueSize];
+    ActorMailbox mailbox_impl_;
+    uint8_t mailbox_queue_buffer[ActorMailbox::ItemSize * T::QueueSize];
 
 public:
     Actor()
-        : ActorCommon<T>(mailboxImpl_)
-        , mailboxImpl_(T::Name, mailboxQueueBuffer, T::QueueSize)
+        : ActorCommon<T>(mailbox_impl_)
+        , mailbox_impl_(T::Name, mailbox_queue_buffer, T::QueueSize)
     {}
 };
 
@@ -81,12 +81,12 @@ public:
     static constexpr UBaseType_t Priority = 1;
     static constexpr BaseType_t QueueSize = 10;
 
-    SactorError ProcessIncomingMessage(_In_ BaseType_t messageId, _In_opt_ void* message, _In_opt_ void* messageReply) {
+    SactorError ProcessIncomingMessage(_In_ BaseType_t message_id, _In_opt_ void* message, _In_opt_ void* message_reply) {
         return SactorError_NoError;
     }
 
 protected:
-    SactorError QueueDelayedMessage(_In_ BaseType_t messageId, _In_ uint32_t delayInMs);
+    SactorError QueueDelayedMessage(_In_ BaseType_t message_id, _In_ uint32_t delay_in_ms);
 };
 
 #endif

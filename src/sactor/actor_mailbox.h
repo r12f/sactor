@@ -14,7 +14,7 @@ class ActorMailbox
         TaskHandle_t SenderTask;
 
         MailboxItem();
-        MailboxItem(_In_ BaseType_t messageId, _In_opt_ const void* messageBuffer, _Out_opt_ void* replyBuffer, _Out_ volatile bool* completed);
+        MailboxItem(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer, _Out_ volatile bool* completed);
         void WaitCompleted();
         void MarkCompleted();
     };
@@ -22,7 +22,7 @@ class ActorMailbox
 public:
     class Tx
     {
-        const char* actorName_;
+        const char* actor_name_;
         StaticMessageQueue<MailboxItem>& queue_;
 
     public:
@@ -38,35 +38,35 @@ public:
             return SendRecvSyncRaw(MessageType::Id, &message, reply);
         }
 
-        SactorError SendAsync(_In_ BaseType_t messageId);
+        SactorError SendAsync(_In_ BaseType_t message_id);
 
     private:
         // ActorMailboxTx can only be created by ActorMailbox.
         friend class ActorMailbox;
-        Tx(const char* actorName, _In_ ActorMailbox& mailbox);
+        Tx(const char* actor_name, _In_ ActorMailbox& mailbox);
 
-        SactorError SendRecvSyncRaw(_In_ BaseType_t messageId, _In_opt_ const void* messageBuffer, _Out_opt_ void* replyBuffer);
-        SactorError QueueRequestRaw(_In_ const MailboxItem& mailboxItem);
+        SactorError SendRecvSyncRaw(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer);
+        SactorError QueueRequestRaw(_In_ const MailboxItem& mailbox_item);
     };
 
     class Rx
     {
-        const char* actorName_;
+        const char* actor_name_;
         StaticMessageQueue<MailboxItem>& queue_;
 
     public:
-        typedef SactorError (*OnMessageFunc)(_In_ void* parameter, _In_ BaseType_t messageId, _In_opt_ const void* messageBuffer, _Out_opt_ void* replyBuffer);
+        typedef SactorError (*OnMessageFunc)(_In_ void* parameter, _In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer);
 
-        SactorError DispatchOneMessage(_In_ OnMessageFunc onMessage, _In_ void* parameter);
+        SactorError DispatchOneMessage(_In_ OnMessageFunc on_message, _In_ void* parameter);
 
     private:
         // ActorMailboxRx can only be created by ActorMailbox.
         friend class ActorMailbox;
-        Rx(_In_ const char* actorName, _In_ ActorMailbox& mailbox);
+        Rx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox);
     };
 
 private:
-    const char* actorName_;
+    const char* actor_name_;
     StaticMessageQueue<MailboxItem> queue_;
     typename ActorMailbox::Tx tx_;
     typename ActorMailbox::Rx rx_;
@@ -74,7 +74,7 @@ private:
 public:
     static const uint32_t ItemSize = sizeof(MailboxItem);
 
-    ActorMailbox(_In_ const char* actorName, _In_ uint8_t* queueBuffer, uint32_t itemCount);
+    ActorMailbox(_In_ const char* actor_name, _In_ uint8_t* queue_buffer, uint32_t item_count);
     const char* GetActorName() const;
     Tx& Tx();
     Rx& Rx();

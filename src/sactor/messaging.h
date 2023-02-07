@@ -24,8 +24,8 @@
     };
 
 #define MESSAGE_MAP_BEGIN() \
-    SactorError ProcessIncomingMessage(_In_ BaseType_t messageId, _In_opt_ const void* message, _In_opt_ void* messageReply) { \
-        switch (messageId) {
+    SactorError ProcessIncomingMessage(_In_ BaseType_t message_id, _In_opt_ const void* message, _In_opt_ void* message_reply) { \
+        switch (message_id) {
 
 #define ON_INIT_MESSAGE(ActorType, HandlerFunc) \
         case MESSAGE_ID_INIT: \
@@ -37,7 +37,7 @@
 
 #define ON_MESSAGE(ActorType, HandlerFunc, MessageType, MessageReplyType) \
         case MESSAGE_ID(ActorType, MessageType): \
-            return this->HandlerFunc((const MessageType*)message), (MessageReplyType*)messageReply);
+            return this->HandlerFunc((const MessageType*)message), (MessageReplyType*)message_reply);
 
 #define ON_MESSAGE_NO_REPLY(ActorType, HandlerFunc, MessageType) \
         case MESSAGE_ID(ActorType, MessageType): \

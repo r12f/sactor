@@ -9,20 +9,20 @@ class ActorWorkerThreadBase
 {
     const char* name_;
     TaskHandle_t task_;
-    StaticTask_t taskCtrl_;
+    StaticTask_t task_ctrl_;
     ActorMailbox& mailbox_;
-    ActorMailbox::Rx::OnMessageFunc onMessage_;
-    void* onMessageParam_;
+    ActorMailbox::Rx::OnMessageFunc on_message_;
+    void* on_message_param_;
 
 protected:
-    ActorWorkerThreadBase(_In_ const char* name, _In_ ActorMailbox& mailbox, _In_ ActorMailbox::Rx::OnMessageFunc onMessage, _In_ void* onMessageParam);
+    ActorWorkerThreadBase(_In_ const char* name, _In_ ActorMailbox& mailbox, _In_ ActorMailbox::Rx::OnMessageFunc on_message, _In_ void* on_message_param);
 
     // We don't need to make this function virtual, because we never cast the ActorWorkerThread pointer to ActorWorkerThreadBase pointer.
     ~ActorWorkerThreadBase();
 
     ActorMailbox& GetMailbox();
 
-    void StartWithParams(_In_ uint32_t stackWordCount, _In_ StackType_t* stackBuffer, _In_ UBaseType_t priority);
+    void StartWithParams(_In_ uint32_t stack_word_count, _In_ StackType_t* stack_buffer, _In_ UBaseType_t priority);
 
 private:
     static void ActorWorkerTaskProc(_In_ void* parameter);
@@ -32,30 +32,30 @@ private:
 template <class T>
 class ActorWorkerThread : public ActorWorkerThreadBase
 {
-    StackType_t stackBuffer_[T::StackWordCount];
-    T& actorImpl_;
+    StackType_t stack_buffer_[T::StackWordCount];
+    T& actor_impl_;
 
 public:
-    ActorWorkerThread(_In_ ActorMailbox& mailbox, _In_ T& actorImpl)
+    ActorWorkerThread(_In_ ActorMailbox& mailbox, _In_ T& actor_impl)
         : ActorWorkerThreadBase(T::Name, mailbox, DispatchIncomingMessageProc, (void*)this)
-        , actorImpl_(actorImpl)
+        , actor_impl_(actor_impl)
     {
         SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED(T::Name, this);
     }
 
     void Start() { 
-        StartWithParams(T::StackWordCount, stackBuffer_, T::Priority);
+        StartWithParams(T::StackWordCount, stack_buffer_, T::Priority);
         GetMailbox().Tx().SendAsync(MESSAGE_ID_INIT);
     }
 
 private:
-    static SactorError DispatchIncomingMessageProc(_In_ void* parameter, _In_ BaseType_t messageId, _In_opt_ const void* messageBuffer, _Out_opt_ void* replyBuffer) {
+    static SactorError DispatchIncomingMessageProc(_In_ void* parameter, _In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer) {
         ActorWorkerThread* worker = (ActorWorkerThread*)parameter;
-        return worker->DispatchIncomingMessage(messageId, messageBuffer, replyBuffer);
+        return worker->DispatchIncomingMessage(message_id, message_buffer, reply_buffer);
     }
 
-    SactorError DispatchIncomingMessage(_In_ BaseType_t messageId, _In_opt_ const void* messageBuffer, _Out_opt_ void* replyBuffer) {
-        return actorImpl_.ProcessIncomingMessage(messageId, messageBuffer, replyBuffer);
+    SactorError DispatchIncomingMessage(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer) {
+        return actor_impl_.ProcessIncomingMessage(message_id, message_buffer, reply_buffer);
     }
 };
 

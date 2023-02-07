@@ -1,121 +1,121 @@
 #include "sactor/delay_message_service.h"
 
 DelayMessageService::DelayMessageService()
-    : jobCount_(0)
+    : job_count_(0)
 {
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATE(this);
 
-    jobsLockHandle_ = xSemaphoreCreateMutexStatic(&jobsLockCtrl_);
-    SACTOR_ENSURES(jobsLockHandle_ != nullptr);
+    jobs_lock_handle_ = xSemaphoreCreateMutexStatic(&jobs_lock_ctrl_);
+    SACTOR_ENSURES(jobs_lock_handle_ != nullptr);
 
-    scheduledTimerTick_ = xTaskGetTickCount();
-    timerHandle_ = xTimerCreateStatic(
+    scheduled_timer_tick_ = xTaskGetTickCount();
+    timer_handle_ = xTimerCreateStatic(
         "DelayMessageServiceTimer",
         1000, /* xTimerPeriod */
-        0, /* uxAutoReload */
+        0, /* ux_auto_reload */
         (void*)this, /* pvTimerId */
-        DelayMessageService::TimerCallbackISR, /* pxCallbackFunction */
-        &timerCtrl_);
+        DelayMessageService::TimerCallbackISR, /* px_callback_function */
+        &timer_ctrl_);
 
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATED(this);
 }
 
 // TimerCallback is an ISR, so we need to be careful on the API that is calls.
-void DelayMessageService::TimerCallbackISR(_In_ TimerHandle_t timerHandle)
+void DelayMessageService::TimerCallbackISR(_In_ TimerHandle_t timer_handle)
 {
-    DelayMessageService* dms = (DelayMessageService*)pvTimerGetTimerID(timerHandle);
+    DelayMessageService* dms = (DelayMessageService*)pvTimerGetTimerID(timer_handle);
     dms->OnTimerISR();
 }
 
 void DelayMessageService::OnTimerISR()
 {
     // Since our timer is one off shot timer, we reset the next scheduled timer tick to 0 whenever the timer is fired.
-    scheduledTimerTick_ = 0;
+    scheduled_timer_tick_ = 0;
 
-    TickType_t currentTick = xTaskGetTickCountFromISR();
+    TickType_t current_tick = xTaskGetTickCountFromISR();
 
     DelayMessageJob job;
-    while (PopDelayedMessageIfExpiredFromISR(currentTick, job)) {
+    while (PopDelayedMessageIfExpiredFromISR(current_tick, job)) {
         job.Target->SendAsync(job.MessageId);
     }
 
-    AdjustScheduledTimerIfNeeded(currentTick, true /* fromISR */);
+    AdjustScheduledTimerIfNeeded(current_tick, true /* from_isr */);
 }
 
-SactorError DelayMessageService::QueueDelayedMessage(_In_ ActorMailbox& mailbox, _In_ BaseType_t messageId, _In_ uint32_t delayInMs)
+SactorError DelayMessageService::QueueDelayedMessage(_In_ ActorMailbox& mailbox, _In_ BaseType_t message_id, _In_ uint32_t delay_in_ms)
 {
-    SACTOR_REQUIRES(jobsLockHandle_ != nullptr);
+    SACTOR_REQUIRES(jobs_lock_handle_ != nullptr);
 
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUE(this, mailbox.GetActorName(), &mailbox, messageId, delayInMs);
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUE(this, mailbox.GetActorName(), &mailbox, message_id, delay_in_ms);
 
-    if (xSemaphoreTake(jobsLockHandle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS)) != pdTRUE) {
+    if (xSemaphoreTake(jobs_lock_handle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS)) != pdTRUE) {
         SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOCK_TAKE_TIMEOUT(this);
         return SactorError_Timeout;
     }
 
-    SactorError result = QueueDelayedMessageUnderLock(mailbox, messageId, delayInMs);
+    SactorError result = QueueDelayedMessageUnderLock(mailbox, message_id, delay_in_ms);
 
-    BaseType_t returnLockResult = xSemaphoreGive(jobsLockHandle_);
-    SACTOR_ENSURES(returnLockResult == pdTRUE);
+    BaseType_t return_lock_result = xSemaphoreGive(jobs_lock_handle_);
+    SACTOR_ENSURES(return_lock_result == pdTRUE);
 
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUED(this, mailbox.GetActorName(), &mailbox, messageId, delayInMs);
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUED(this, mailbox.GetActorName(), &mailbox, message_id, delay_in_ms);
 
     return result;
 }
 
-SactorError DelayMessageService::QueueDelayedMessageUnderLock(_In_ ActorMailbox& mailbox, _In_ BaseType_t messageId, _In_ uint32_t delayInMs)
+SactorError DelayMessageService::QueueDelayedMessageUnderLock(_In_ ActorMailbox& mailbox, _In_ BaseType_t message_id, _In_ uint32_t delay_in_ms)
 {
-    if (jobCount_ == SACTOR_DELAY_MESSAGE_SERVICE_MAX_ITEM_COUNT) {
+    if (job_count_ == SACTOR_DELAY_MESSAGE_SERVICE_MAX_ITEM_COUNT) {
         return SactorError_QueueFull;
     }
 
-    TickType_t currentTick = xTaskGetTickCount();
+    TickType_t current_tick = xTaskGetTickCount();
 
-    DelayMessageJob& job = jobs_[jobCount_];
+    DelayMessageJob& job = jobs_[job_count_];
     job.Target = &mailbox.Tx();
-    job.MessageId = messageId;
-    job.ExpiryTick = currentTick + pdMS_TO_TICKS(delayInMs);
-    ++jobCount_;
+    job.MessageId = message_id;
+    job.ExpiryTick = current_tick + pdMS_TO_TICKS(delay_in_ms);
+    ++job_count_;
 
     AdjustJobHeapBottomUp();
-    AdjustScheduledTimerIfNeeded(currentTick, false /* fromISR */);
+    AdjustScheduledTimerIfNeeded(current_tick, false /* from_isr */);
 
     return SactorError_NoError;
 }
 
-bool DelayMessageService::PopDelayedMessageIfExpiredFromISR(_In_ TickType_t currentTick, _Out_ DelayMessageJob& job)
+bool DelayMessageService::PopDelayedMessageIfExpiredFromISR(_In_ TickType_t current_tick, _Out_ DelayMessageJob& job)
 {
-    SACTOR_REQUIRES(jobsLockHandle_ != nullptr);
+    SACTOR_REQUIRES(jobs_lock_handle_ != nullptr);
 
-    if (xSemaphoreTakeFromISR(jobsLockHandle_, nullptr) != pdTRUE) {
+    if (xSemaphoreTakeFromISR(jobs_lock_handle_, nullptr) != pdTRUE) {
         SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOCK_TAKE_TIMEOUT(this);
         return false;
     }
 
-    bool foundJob = PopDelayedMessageIfExpiredUnderLock(currentTick, job);
+    bool found_job = PopDelayedMessageIfExpiredUnderLock(current_tick, job);
 
-    BaseType_t result = xSemaphoreGiveFromISR(jobsLockHandle_, nullptr);
+    BaseType_t result = xSemaphoreGiveFromISR(jobs_lock_handle_, nullptr);
     SACTOR_ENSURES(result == pdTRUE);
 
-    return foundJob;
+    return found_job;
 }
 
-bool DelayMessageService::PopDelayedMessageIfExpiredUnderLock(_In_ TickType_t currentTick, _Out_ DelayMessageJob& job)
+bool DelayMessageService::PopDelayedMessageIfExpiredUnderLock(_In_ TickType_t current_tick, _Out_ DelayMessageJob& job)
 {
-    if (jobCount_ == 0) {
+    if (job_count_ == 0) {
         return false;
     }
 
-    if (currentTick < jobs_[0].ExpiryTick) {
+    if (current_tick < jobs_[0].ExpiryTick) {
         return false;
     }
 
     job = jobs_[0];
 
     // Adjust heap to find the next closest timer.
-    --jobCount_;
-    if (jobCount_ > 0) {
-        jobs_[0] = jobs_[jobCount_];
+    --job_count_;
+    if (job_count_ > 0) {
+        jobs_[0] = jobs_[job_count_];
         AdjustJobHeapTopDown();
     }
 
@@ -124,108 +124,108 @@ bool DelayMessageService::PopDelayedMessageIfExpiredUnderLock(_In_ TickType_t cu
 
 void DelayMessageService::AdjustJobHeapTopDown()
 {
-    int jobIndex = 0;
-    DelayMessageJob temp = jobs_[jobIndex];
+    int job_index = 0;
+    DelayMessageJob temp = jobs_[job_index];
 
-    int childJobIndex = 2 * jobIndex + 1;
-    while (childJobIndex < jobCount_) {
+    int child_job_index = 2 * job_index + 1;
+    while (child_job_index < job_count_) {
         // Find the smaller one to move up.
-        if (childJobIndex + 1 < jobCount_ && jobs_[childJobIndex + 1].ExpiryTick < jobs_[childJobIndex].ExpiryTick) {
-            ++childJobIndex;
+        if (child_job_index + 1 < job_count_ && jobs_[child_job_index + 1].ExpiryTick < jobs_[child_job_index].ExpiryTick) {
+            ++child_job_index;
         }
 
-        if (jobs_[childJobIndex].ExpiryTick > jobs_[jobIndex].ExpiryTick) {
+        if (jobs_[child_job_index].ExpiryTick > jobs_[job_index].ExpiryTick) {
             break;
         }
 
-        jobs_[jobIndex] = jobs_[childJobIndex];
-        jobIndex = childJobIndex;
-        childJobIndex = 2 * jobIndex + 1;
+        jobs_[job_index] = jobs_[child_job_index];
+        job_index = child_job_index;
+        child_job_index = 2 * job_index + 1;
     }
 
-    jobs_[jobIndex] = temp;
+    jobs_[job_index] = temp;
 }
 
 void DelayMessageService::AdjustJobHeapBottomUp()
 {
-    SACTOR_REQUIRES(jobCount_ > 0);
+    SACTOR_REQUIRES(job_count_ > 0);
 
-    int jobIndex = jobCount_ - 1;
-    DelayMessageJob temp = jobs_[jobIndex];
+    int job_index = job_count_ - 1;
+    DelayMessageJob temp = jobs_[job_index];
 
-    int parentJobIndex = (jobIndex - 1) / 2;
-    while (parentJobIndex >= 0 && jobIndex != 0) {
-        if (jobs_[parentJobIndex].ExpiryTick <= jobs_[jobIndex].ExpiryTick) {
+    int parent_job_index = (job_index - 1) / 2;
+    while (parent_job_index >= 0 && job_index != 0) {
+        if (jobs_[parent_job_index].ExpiryTick <= jobs_[job_index].ExpiryTick) {
             break;
         }
 
-        jobs_[jobIndex] = jobs_[parentJobIndex];
-        jobIndex = parentJobIndex;
-        parentJobIndex = (jobIndex - 1) / 2;
+        jobs_[job_index] = jobs_[parent_job_index];
+        job_index = parent_job_index;
+        parent_job_index = (job_index - 1) / 2;
     }
 
-    jobs_[jobIndex] = temp;
+    jobs_[job_index] = temp;
 }
 
-void DelayMessageService::AdjustScheduledTimerIfNeeded(_In_ TickType_t currentTick, _In_ bool fromISR)
+void DelayMessageService::AdjustScheduledTimerIfNeeded(_In_ TickType_t current_tick, _In_ bool from_isr)
 {
-    SACTOR_REQUIRES(timerHandle_ != nullptr);
+    SACTOR_REQUIRES(timer_handle_ != nullptr);
 
     // If no more jobs, stop the timer.
-    if (jobCount_ == 0) {
-        if (xTimerIsTimerActive(timerHandle_)) {
-            StopTimer(fromISR);
+    if (job_count_ == 0) {
+        if (xTimerIsTimerActive(timer_handle_)) {
+            StopTimer(from_isr);
         }
 
         return;
     }
 
     // If has job, check the closest job and set the timer to it.
-    ScheduleTimer(currentTick, fromISR);
+    ScheduleTimer(current_tick, from_isr);
 }
 
-void DelayMessageService::ScheduleTimer(_In_ TickType_t currentTick, _In_ bool fromISR)
+void DelayMessageService::ScheduleTimer(_In_ TickType_t current_tick, _In_ bool from_isr)
 {
-    SACTOR_REQUIRES(jobCount_ > 0);
+    SACTOR_REQUIRES(job_count_ > 0);
 
     // If current scheduled tick is the same as the required one, don't do anything.
-    TickType_t expiryTick = jobs_[0].ExpiryTick;
-    if (expiryTick == scheduledTimerTick_) {
+    TickType_t expiry_tick = jobs_[0].ExpiryTick;
+    if (expiry_tick == scheduled_timer_tick_) {
         return;
     }
 
-    TickType_t newDeadlineTick = expiryTick < currentTick ? 1 : (expiryTick - currentTick);
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE(this, newDeadlineTick);
+    TickType_t new_deadline_tick = expiry_tick < current_tick ? 1 : (expiry_tick - current_tick);
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE(this, new_deadline_tick);
     
     // Otherwise change the period and reset the timer.
-    if (fromISR) {
-        xTimerChangePeriodFromISR(timerHandle_, newDeadlineTick, nullptr);
-        xTimerStartFromISR(timerHandle_, nullptr);
+    if (from_isr) {
+        xTimerChangePeriodFromISR(timer_handle_, new_deadline_tick, nullptr);
+        xTimerStartFromISR(timer_handle_, nullptr);
     } else {
-        BaseType_t result = xTimerChangePeriod(timerHandle_, newDeadlineTick, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
+        BaseType_t result = xTimerChangePeriod(timer_handle_, new_deadline_tick, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
         SACTOR_ENSURES(result == pdPASS);
 
-        result = xTimerStart(timerHandle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
+        result = xTimerStart(timer_handle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
         SACTOR_ENSURES(result == pdPASS);
     }
 
-    scheduledTimerTick_ = expiryTick;
+    scheduled_timer_tick_ = expiry_tick;
 
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED(this, newDeadlineTick);
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED(this, new_deadline_tick);
 }
 
-void DelayMessageService::StopTimer(_In_ bool fromISR)
+void DelayMessageService::StopTimer(_In_ bool from_isr)
 {
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_STOP(this);
 
-    if (fromISR) {
-        xTimerStopFromISR(timerHandle_, nullptr);
+    if (from_isr) {
+        xTimerStopFromISR(timer_handle_, nullptr);
     } else {
-        BaseType_t result = xTimerStop(timerHandle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
+        BaseType_t result = xTimerStop(timer_handle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
         SACTOR_ENSURES(result == pdPASS);
     }
 
-    scheduledTimerTick_ = 0;
+    scheduled_timer_tick_ = 0;
 
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_STOPPED(this);
 }

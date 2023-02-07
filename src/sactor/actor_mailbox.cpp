@@ -5,10 +5,10 @@ ActorMailbox::MailboxItem::MailboxItem()
 {
 }
 
-ActorMailbox::MailboxItem::MailboxItem(_In_ BaseType_t messageId, _In_opt_ const void* messageBuffer, _Out_opt_ void* replyBuffer, _Out_ volatile bool* completed)
-    : MessageId(messageId)
-    , MessageBuffer(messageBuffer)
-    , ReplyBuffer(replyBuffer)
+ActorMailbox::MailboxItem::MailboxItem(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer, _Out_ volatile bool* completed)
+    : MessageId(message_id)
+    , MessageBuffer(message_buffer)
+    , ReplyBuffer(reply_buffer)
     , Completed(completed)
     , SenderTask(xTaskGetCurrentTaskHandle())
 {
@@ -16,7 +16,7 @@ ActorMailbox::MailboxItem::MailboxItem(_In_ BaseType_t messageId, _In_opt_ const
 
 void ActorMailbox::MailboxItem::WaitCompleted()
 {
-    static TickType_t backoffDelays[] = { 1, 5, 10, 50, 100, 500, 1000, 4000 };
+    static TickType_t backoff_delays[] = { 1, 5, 10, 50, 100, 500, 1000, 4000 };
 
     if (Completed == nullptr) {
         return;
@@ -24,8 +24,8 @@ void ActorMailbox::MailboxItem::WaitCompleted()
 
     uint32_t index = 0;
     while (!*Completed) {
-        vTaskDelay(backoffDelays[index]);
-        if (index < (sizeof(backoffDelays) / sizeof(TickType_t)) - 1) {
+        vTaskDelay(backoff_delays[index]);
+        if (index < (sizeof(backoff_delays) / sizeof(TickType_t)) - 1) {
             ++index;
         }
     }
@@ -41,72 +41,72 @@ void ActorMailbox::MailboxItem::MarkCompleted()
     xTaskAbortDelay(SenderTask);
 }
 
-ActorMailbox::Tx::Tx(_In_ const char* actorName, _In_ ActorMailbox& mailbox)
-    : actorName_(actorName)
+ActorMailbox::Tx::Tx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox)
+    : actor_name_(actor_name)
     , queue_(mailbox.queue_)
 {}
 
-SactorError ActorMailbox::Tx::SendAsync(_In_ BaseType_t messageId)
+SactorError ActorMailbox::Tx::SendAsync(_In_ BaseType_t message_id)
 {
-    MailboxItem mailboxItem { messageId, nullptr, nullptr, nullptr };
-    return QueueRequestRaw(mailboxItem);
+    MailboxItem mailbox_item { message_id, nullptr, nullptr, nullptr };
+    return QueueRequestRaw(mailbox_item);
 }
 
-SactorError ActorMailbox::Tx::SendRecvSyncRaw(_In_ BaseType_t messageId, _In_opt_ const void* messageBuffer, _Out_opt_ void* replyBuffer)
+SactorError ActorMailbox::Tx::SendRecvSyncRaw(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer)
 {
     volatile bool completed = false;
-    MailboxItem mailboxItem { messageId, messageBuffer, replyBuffer, &completed };
+    MailboxItem mailbox_item { message_id, message_buffer, reply_buffer, &completed };
 
-    SactorError result = QueueRequestRaw(mailboxItem);
+    SactorError result = QueueRequestRaw(mailbox_item);
     if (result != SactorError_NoError) {
         return result;
     }
 
-    mailboxItem.WaitCompleted();
+    mailbox_item.WaitCompleted();
 
     return result;
 }
 
-SactorError ActorMailbox::Tx::QueueRequestRaw(_In_ const MailboxItem& mailboxItem)
+SactorError ActorMailbox::Tx::QueueRequestRaw(_In_ const MailboxItem& mailbox_item)
 {
-    SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(actorName_, this, mailboxItem.MessageId, mailboxItem.MessageBuffer, mailboxItem.ReplyBuffer);
-    return queue_.Tx().Send((void *)&mailboxItem);
+    SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(actor_name_, this, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
+    return queue_.Tx().Send((void *)&mailbox_item);
 }
 
-ActorMailbox::Rx::Rx(_In_ const char* actorName, _In_ ActorMailbox& mailbox)
-    : actorName_(actorName)
+ActorMailbox::Rx::Rx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox)
+    : actor_name_(actor_name)
     , queue_(mailbox.queue_)
 {}
 
-SactorError ActorMailbox::Rx::DispatchOneMessage(_In_ OnMessageFunc onMessage, _In_ void* parameter)
+SactorError ActorMailbox::Rx::DispatchOneMessage(_In_ OnMessageFunc on_message, _In_ void* parameter)
 {
-    MailboxItem mailboxItem;
-    SactorError result = queue_.Rx().Receive(&mailboxItem, SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS);
+    MailboxItem mailbox_item;
+    SactorError result = queue_.Rx().Receive(&mailbox_item, SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS);
     if (result == SactorError_QueueEmpty) {
         return result;
     }
 
-    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE(actorName_, this, mailboxItem.MessageId, mailboxItem.MessageBuffer, mailboxItem.ReplyBuffer);
-    result = onMessage(parameter, mailboxItem.MessageId, mailboxItem.MessageBuffer, mailboxItem.ReplyBuffer);
+    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE(actor_name_, this, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
+    result = on_message(parameter, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
 
-    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(actorName_, this, mailboxItem.MessageId, mailboxItem.MessageBuffer, mailboxItem.ReplyBuffer);
-    mailboxItem.MarkCompleted();
+    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(actor_name_, this, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
+    mailbox_item.MarkCompleted();
 
     return result;
 }
 
-ActorMailbox::ActorMailbox(_In_ const char* actorName, _In_ uint8_t* queueBuffer, uint32_t itemCount)
-    : actorName_(actorName)
-    , queue_(queueBuffer, itemCount)
-    , tx_(actorName, *this)
-    , rx_(actorName, *this)
+ActorMailbox::ActorMailbox(_In_ const char* actor_name, _In_ uint8_t* queue_buffer, uint32_t item_count)
+    : actor_name_(actor_name)
+    , queue_(queue_buffer, item_count)
+    , tx_(actor_name, *this)
+    , rx_(actor_name, *this)
 {
-    SACTOR_TRACE_ACTOR_MAILBOX_CREATED(actorName, this);
+    SACTOR_TRACE_ACTOR_MAILBOX_CREATED(actor_name, this);
 }
 
 const char* ActorMailbox::GetActorName() const
 {
-    return actorName_;
+    return actor_name_;
 }
 
 typename ActorMailbox::Tx& ActorMailbox::Tx()

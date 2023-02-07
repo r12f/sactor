@@ -29,8 +29,8 @@ SactorError StaticMessageQueueTx::SendFromISR(_In_ void* item)
 {
     SACTOR_REQUIRES(queue_ != nullptr);
 
-    BaseType_t higherPriorityTaskWoken = 0;
-    BaseType_t ret = xQueueSendToBackFromISR(queue_, item, &higherPriorityTaskWoken);
+    BaseType_t higher_priority_task_woken = 0;
+    BaseType_t ret = xQueueSendToBackFromISR(queue_, item, &higher_priority_task_woken);
 
     if (ret == errQUEUE_FULL) {
         return SactorError_QueueFull;
@@ -51,11 +51,11 @@ void StaticMessageQueueRx::SetQueueHandle(_In_ QueueHandle_t queue)
     queue_ = queue;
 }
 
-SactorError StaticMessageQueueRx::Receive(_Out_ void* item, _In_ TickType_t timeoutMs)
+SactorError StaticMessageQueueRx::Receive(_Out_ void* item, _In_ TickType_t timeout_ms)
 {
     SACTOR_REQUIRES(queue_ != nullptr);
 
-    BaseType_t ret = xQueueReceive(queue_, item, timeoutMs / portTICK_PERIOD_MS);
+    BaseType_t ret = xQueueReceive(queue_, item, timeout_ms / portTICK_PERIOD_MS);
     if (ret != pdTRUE) {
         return SactorError_QueueEmpty;
     }
@@ -67,8 +67,8 @@ SactorError StaticMessageQueueRx::ReceiveFromISR(_Out_ void* item)
 {
     SACTOR_REQUIRES(queue_ != nullptr);
 
-    BaseType_t higherPriorityTaskWoken = 0;
-    BaseType_t ret = xQueueReceiveFromISR(queue_, item, &higherPriorityTaskWoken);
+    BaseType_t higher_priority_task_woken = 0;
+    BaseType_t ret = xQueueReceiveFromISR(queue_, item, &higher_priority_task_woken);
     if (ret != pdTRUE) {
         return SactorError_QueueEmpty;
     }
