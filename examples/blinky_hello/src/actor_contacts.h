@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdio.h>
 #include "sactor.h"
 
 DECLARE_MESSAGE_ID_BEGIN(ActorHelloImpl)

@@ -1,4 +1,5 @@
 #include "actors.h"
+#include <stdio.h>
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 
@@ -6,6 +7,12 @@
 
 ActorHello hello;
 ActorBlinky blinky;
+
+SactorError ActorHelloImpl::on_hello(_In_ const HelloMessage* message)
+{
+    printf("Hello world! LED = %s\n", message->IsOn ? "On" : "Off");
+    return SactorError_NoError;
+}
 
 SactorError ActorBlinkyImpl::on_init()
 {

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdio.h>
-#include "sactor.h"
 #include "actor_contacts.h"
 
 class ActorHelloImpl : public ActorImpl
@@ -14,10 +12,7 @@ public:
     MESSAGE_MAP_END()
 
 private:
-    SactorError on_hello(_In_ const HelloMessage* message) {
-        printf("Hello world! LED = %s\n", message->IsOn ? "On" : "Off");
-        return SactorError_NoError;
-    }
+    SactorError on_hello(_In_ const HelloMessage* message);
 };
 
 class ActorBlinkyImpl : public ActorImpl
@@ -38,4 +33,3 @@ typedef Actor<ActorBlinkyImpl> ActorBlinky;
 
 extern ActorHello hello;
 extern ActorBlinky blinky;
-

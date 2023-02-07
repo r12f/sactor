@@ -47,34 +47,32 @@ Here is the header file - `actors.h`:
 ```c++
 #pragma once
 
-#include <stdio.h>
-#include "sactor.h"
 #include "actor_contacts.h"
 
 class ActorHelloImpl : public ActorImpl
 {
 public:
-    static constexpr const char* Name = "ActorHello";
+    static constexpr const char* NAME = "ActorHello";
 
     MESSAGE_MAP_BEGIN()
-        ON_MESSAGE_NO_REPLY(ActorHelloImpl, OnHello, HelloMessage)
+        ON_MESSAGE_NO_REPLY(ActorHelloImpl, on_hello, HelloMessage)
     MESSAGE_MAP_END()
 
 private:
-    SactorError OnHello(_In_ const HelloMessage* message);
+    SactorError on_hello(_In_ const HelloMessage* message);
 };
 
 class ActorBlinkyImpl : public ActorImpl
 {
 public:
-    static constexpr const char* Name = "ActorBlinky";
+    static constexpr const char* NAME = "ActorBlinky";
 
     MESSAGE_MAP_BEGIN()
-        ON_INIT_MESSAGE(ActorBlinkyImpl, OnInit)
+        ON_INIT_MESSAGE(ActorBlinkyImpl, on_init)
     MESSAGE_MAP_END()
 
 private:
-    SactorError OnInit();
+    SactorError on_init();
 };
 
 typedef Actor<ActorHelloImpl> ActorHello;
@@ -88,37 +86,36 @@ And here is the source file: `actors.cpp`:
 
 ```c++
 #include "actors.h"
+#include <stdio.h>
 #include "driver/gpio.h"
 #include "sdkconfig.h"
 
 #define BLINK_GPIO GPIO_NUM_10
 
-// All actors are instantiated here.
 ActorHello hello;
 ActorBlinky blinky;
 
-SactorError ActorHelloImpl::OnHello(_In_ const HelloMessage* message)
+SactorError ActorHelloImpl::on_hello(_In_ const HelloMessage* message)
 {
     printf("Hello world! LED = %s\n", message->IsOn ? "On" : "Off");
     return SactorError_NoError;
 }
 
-SactorError ActorBlinkyImpl::OnInit()
+SactorError ActorBlinkyImpl::on_init()
 {
     esp_rom_gpio_pad_select_gpio(BLINK_GPIO);
     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);
-
     while(1) {
         /* Blink off (output low) */
         printf("Turning off the LED\n");
         gpio_set_level(BLINK_GPIO, 0);
-        hello.SendSync(HelloMessage { false });
+        hello.send_sync(HelloMessage { false });
         vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         /* Blink on (output high) */
         printf("Turning on the LED\n");
         gpio_set_level(BLINK_GPIO, 1);
-        hello.SendSync(HelloMessage { true });
+        hello.send_sync(HelloMessage { true });
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
