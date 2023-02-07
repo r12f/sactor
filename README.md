@@ -29,7 +29,7 @@ First, we define the contract between these 2 actors. We need to define the mess
 ```c++
 #pragma once
 
-#include "sactor/sactor.h"
+#include "sactor.h"
 
 DECLARE_MESSAGE_ID_BEGIN(ActorHelloImpl)
     MESSAGE_ID(ActorHelloImpl, HelloMessage)
@@ -48,7 +48,7 @@ Here is the header file - `actors.h`:
 #pragma once
 
 #include <stdio.h>
-#include "sactor/sactor.h"
+#include "sactor.h"
 #include "actor_contacts.h"
 
 class ActorHelloImpl : public ActorImpl
