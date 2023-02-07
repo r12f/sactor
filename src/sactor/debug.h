@@ -120,12 +120,12 @@
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUE
 #define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUE(Pointer, ActorName, ActorMailbox, MessageId, DelayInMs) \
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service queuing delayed message: Actor = %s, Mailbox = %p, MessageId = %d, Delay = %ld ms.", ActorName, ActorMailbox, MessageId, DelayInMs)
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service queuing delayed message: Actor = %s, Mailbox = %p, MessageId = %d, Delay = %d ms.", ActorName, ActorMailbox, MessageId, (int)DelayInMs)
 #endif
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUED
 #define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUED(Pointer, ActorName, ActorMailbox, MessageId, DelayInMs) \
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service delayed message queued: Actor = %s, Mailbox = %p, MessageId = %d, Delay = %ld ms.", ActorName, ActorMailbox, MessageId, DelayInMs)
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service delayed message queued: Actor = %s, Mailbox = %p, MessageId = %d, Delay = %d ms.", ActorName, ActorMailbox, MessageId, (int)DelayInMs)
 #endif
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOCK_TAKE_TIMEOUT
@@ -135,12 +135,12 @@
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE
 #define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE(Pointer, NewPeriod) \
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service scheduling timer: NewPeriod = %ld ms.", NewPeriod)
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service scheduling timer: NewPeriod = %d ms.", (int)NewPeriod)
 #endif
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED
 #define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED(Pointer, NewPeriod) \
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service timer scheduled: NewPeriod = %ld ms.", NewPeriod)
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service timer scheduled: NewPeriod = %d ms.", (int)NewPeriod)
 #endif
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_STOP
