@@ -14,7 +14,7 @@ DelayMessageService::DelayMessageService()
         1000, /* xTimerPeriod */
         0, /* ux_auto_reload */
         (void*)this, /* pvTimerId */
-        DelayMessageService::TimerCallbackISR, /* px_callback_function */
+        DelayMessageService::timer_callback_isr, /* px_callback_function */
         &timer_ctrl_);
 
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATED(this);
@@ -72,7 +72,7 @@ SactorError DelayMessageService::queue_delayed_message_under_lock(_In_ ActorMail
     TickType_t current_tick = xTaskGetTickCount();
 
     DelayMessageJob& job = jobs_[job_count_];
-    job.Target = &mailbox.Tx();
+    job.Target = &mailbox.tx();
     job.MessageId = message_id;
     job.ExpiryTick = current_tick + pdMS_TO_TICKS(delay_in_ms);
     ++job_count_;

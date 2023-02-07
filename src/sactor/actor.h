@@ -23,17 +23,17 @@ public:
     }
 
     template <class MessageType>
-    SactorError SendSync(_In_ const MessageType& message) {
-        return mailbox_.Tx().SendSync(message);
+    SactorError send_sync(_In_ const MessageType& message) {
+        return mailbox_.tx().send_sync(message);
     }
 
     template <class MessageType, class ReplyType>
-    SactorError SendRecvSync(_In_ const MessageType& message, _Out_ ReplyType& reply) {
-        return mailbox_.Tx().SendRecvSync(message, reply);
+    SactorError send_recv_sync(_In_ const MessageType& message, _Out_ ReplyType& reply) {
+        return mailbox_.tx().send_recv_sync(message, reply);
     }
 
     SactorError send_async(_In_ BaseType_t message_id) {
-        return mailbox_.Tx().send_async(message_id);
+        return mailbox_.tx().send_async(message_id);
     }
 
 protected:

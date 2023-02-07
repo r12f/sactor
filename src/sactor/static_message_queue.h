@@ -66,8 +66,8 @@ public:
 
     QueueHandle_t GetHandle() const { return queue_; }
 
-    StaticMessageQueueTx& Tx() { return tx_; }
-    StaticMessageQueueRx& Rx() { return rx_; }
+    StaticMessageQueueTx& tx() { return tx_; }
+    StaticMessageQueueRx& rx() { return rx_; }
 
 private:
     StaticMessageQueue(const StaticMessageQueue&) = default;

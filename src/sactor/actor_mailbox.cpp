@@ -70,7 +70,7 @@ SactorError ActorMailbox::Tx::send_recv_sync_raw(_In_ BaseType_t message_id, _In
 SactorError ActorMailbox::Tx::queue_request_raw(_In_ const MailboxItem& mailbox_item)
 {
     SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(actor_name_, this, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
-    return queue_.Tx().send((void *)&mailbox_item);
+    return queue_.tx().send((void *)&mailbox_item);
 }
 
 ActorMailbox::Rx::Rx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox)
@@ -81,7 +81,7 @@ ActorMailbox::Rx::Rx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox)
 SactorError ActorMailbox::Rx::dispatch_one_message(_In_ OnMessageFunc on_message, _In_ void* parameter)
 {
     MailboxItem mailbox_item;
-    SactorError result = queue_.Rx().receive(&mailbox_item, SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS);
+    SactorError result = queue_.rx().receive(&mailbox_item, SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS);
     if (result == SactorError_QueueEmpty) {
         return result;
     }
@@ -109,12 +109,12 @@ const char* ActorMailbox::GetActorName() const
     return actor_name_;
 }
 
-typename ActorMailbox::Tx& ActorMailbox::Tx()
+typename ActorMailbox::Tx& ActorMailbox::tx()
 {
     return tx_;
 }
 
-typename ActorMailbox::Rx& ActorMailbox::Rx()
+typename ActorMailbox::Rx& ActorMailbox::rx()
 {
     return rx_;
 }

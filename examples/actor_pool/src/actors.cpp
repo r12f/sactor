@@ -29,7 +29,7 @@ SactorError ActorSchedulerImpl::OnInit()
         printf("Schedule LED status update: Status = %s\n", isOn ? "On" : "Off");
 
         for (gpio_num_t ledPin : ledPins) {
-            actorPoolMailbox.Tx().SendSync(ControlMessage { ledPin, isOn });
+            actorPoolMailbox.tx().send_sync(ControlMessage { ledPin, isOn });
         }
         isOn = !isOn;
 

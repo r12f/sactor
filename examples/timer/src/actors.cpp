@@ -14,17 +14,17 @@ SactorError ActorSchedulerImpl::OnInit()
 {
     esp_rom_gpio_pad_select_gpio(LED_GPIO);
     gpio_set_direction(LED_GPIO, GPIO_MODE_OUTPUT);
-    QueueDelayedMessage(MESSAGE_ID(ActorSchedulerImpl, ScheduleTimerMessage), 1000);
+    queue_delayed_message(MESSAGE_ID(ActorSchedulerImpl, ScheduleTimerMessage), 1000);
     return SactorError_NoError;
 }
 
 SactorError ActorSchedulerImpl::OnScheduleTimer()
 {
     printf("Schedule LED status update: Status = %s\n", isOn_ ? "On" : "Off");
-    actorPoolMailbox.Tx().SendSync(ControlMessage { LED_GPIO, isOn_ });
+    actorPoolMailbox.tx().send_sync(ControlMessage { LED_GPIO, isOn_ });
     isOn_ = !isOn_;
 
-    QueueDelayedMessage(MESSAGE_ID(ActorSchedulerImpl, ScheduleTimerMessage), 1000);
+    queue_delayed_message(MESSAGE_ID(ActorSchedulerImpl, ScheduleTimerMessage), 1000);
     return SactorError_NoError;
 }
 

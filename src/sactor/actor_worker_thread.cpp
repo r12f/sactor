@@ -27,7 +27,7 @@ void ActorWorkerThreadBase::start_with_params(_In_ uint32_t stack_word_count, _I
     SACTOR_TRACE_ACTOR_WORKER_THREAD_START(name_, this);
 
     task_ = xTaskCreateStatic(
-        &ActorWorkerThreadBase::ActorWorkerTaskProc,
+        &ActorWorkerThreadBase::actor_worker_task_proc,
         name_,
         stack_word_count,
         (void*)this,
@@ -51,7 +51,7 @@ void ActorWorkerThreadBase::task_proc()
     SACTOR_TRACE_ACTOR_WORKER_THREAD_TASK_LOOP_ENTERED(name_, this);
 
     for (;;) {
-        SactorError result = mailbox_.Rx().dispatch_one_message(on_message_, on_message_param_);
+        SactorError result = mailbox_.rx().dispatch_one_message(on_message_, on_message_param_);
         if (result == SactorError_TaskStopped) {
             break;
         }

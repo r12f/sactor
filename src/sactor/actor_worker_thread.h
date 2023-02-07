@@ -45,7 +45,7 @@ public:
 
     void Start() { 
         start_with_params(T::StackWordCount, stack_buffer_, T::Priority);
-        get_mailbox().Tx().send_async(MESSAGE_ID_INIT);
+        get_mailbox().tx().send_async(MESSAGE_ID_INIT);
     }
 
 private:

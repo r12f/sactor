@@ -27,13 +27,13 @@ public:
 
     public:
         template <class MessageType>
-        SactorError SendSync(_In_ const MessageType& message)
+        SactorError send_sync(_In_ const MessageType& message)
         {
             return send_recv_sync_raw(MessageType::Id, &message, nullptr);
         }
 
         template <class MessageType, class ReplyType>
-        SactorError SendRecvSync(_In_ const MessageType& message, _Out_ ReplyType& reply)
+        SactorError send_recv_sync(_In_ const MessageType& message, _Out_ ReplyType& reply)
         {
             return send_recv_sync_raw(MessageType::Id, &message, reply);
         }
@@ -76,8 +76,8 @@ public:
 
     ActorMailbox(_In_ const char* actor_name, _In_ uint8_t* queue_buffer, uint32_t item_count);
     const char* GetActorName() const;
-    Tx& Tx();
-    Rx& Rx();
+    Tx& tx();
+    Rx& rx();
 };
 
 #endif

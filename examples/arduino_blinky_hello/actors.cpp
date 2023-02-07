@@ -15,13 +15,13 @@ SactorError ActorBlinkyImpl::OnInit()
         /* Blink off (output low) */
         printf("Turning off the LED\n");
         digitalWrite(LED_BUILTIN, LOW);
-        hello.SendSync(HelloMessage { false });
+        hello.send_sync(HelloMessage { false });
         vTaskDelay(1000 / portTICK_PERIOD_MS);
 
         /* Blink on (output high) */
         printf("Turning on the LED\n");
         digitalWrite(LED_BUILTIN, HIGH);
-        hello.SendSync(HelloMessage { true });
+        hello.send_sync(HelloMessage { true });
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
 }
