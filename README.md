@@ -1,6 +1,6 @@
 # Sactor
 
-[![Platform.IO](https://img.shields.io/badge/platform.io-v0.1.1-orange)](https://registry.platformio.org/libraries/r12f/Sactor)
+[![Platform.IO](https://img.shields.io/badge/platform.io-v0.2.0-orange)](https://registry.platformio.org/libraries/r12f/Sactor)
 
 Sactor is a light-weighted actor model framework based on FreeRTOS, designed for small IoT devices such as MCUs.
 
