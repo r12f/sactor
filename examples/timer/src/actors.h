@@ -6,12 +6,12 @@
 
 class ActorSchedulerImpl : public ActorImpl
 {
-    bool isOn_;
+    bool is_on_;
 
 public:
     static constexpr const char* NAME = "ActorScheduler";
 
-    ActorSchedulerImpl() : isOn_(true) {}
+    ActorSchedulerImpl() : is_on_(true) {}
 
     MESSAGE_MAP_BEGIN()
         ON_INIT_MESSAGE(ActorSchedulerImpl, on_init)
@@ -41,4 +41,4 @@ typedef PooledActor<ActorLedCtrlImpl> ActorLedCtrl;
 
 extern ActorScheduler scheduler;
 extern ActorMailbox actor_pool_mailbox;
-extern ActorLedCtrl ledCtrl;
+extern ActorLedCtrl led_ctrl;

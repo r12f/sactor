@@ -7,5 +7,5 @@ DECLARE_MESSAGE_ID_BEGIN(ActorHelloImpl)
 DECLARE_MESSAGE_ID_END()
 
 DECLARE_MESSAGE_BEGIN(ActorHelloImpl, HelloMessage)
-    bool IsOn;
+    bool is_on;
 DECLARE_MESSAGE_END()

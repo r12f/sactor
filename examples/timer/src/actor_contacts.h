@@ -12,6 +12,6 @@ DECLARE_MESSAGE_ID_BEGIN(ActorLedCtrlImpl)
 DECLARE_MESSAGE_ID_END()
 
 DECLARE_MESSAGE_BEGIN(ActorLedCtrlImpl, ControlMessage)
-    gpio_num_t Pin;
-    bool IsOn;
+    gpio_num_t pin;
+    bool is_on;
 DECLARE_MESSAGE_END()

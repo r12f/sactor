@@ -46,7 +46,7 @@ DECLARE_MESSAGE_ID_BEGIN(ActorHelloImpl)
 DECLARE_MESSAGE_ID_END()
 
 DECLARE_MESSAGE_BEGIN(ActorHelloImpl, HelloMessage)
-    bool IsOn;
+    bool is_on;
 DECLARE_MESSAGE_END()
 ```
 
@@ -107,7 +107,7 @@ ActorBlinky blinky;
 
 SactorError ActorHelloImpl::on_hello(_In_ const HelloMessage* message)
 {
-    printf("Hello world! LED = %s\n", message->IsOn ? "On" : "Off");
+    printf("Hello world! LED = %s\n", message->is_on ? "On" : "Off");
     return SactorError_NoError;
 }
 

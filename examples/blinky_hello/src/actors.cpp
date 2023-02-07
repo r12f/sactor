@@ -10,7 +10,7 @@ ActorBlinky blinky;
 
 SactorError ActorHelloImpl::on_hello(_In_ const HelloMessage* message)
 {
-    printf("Hello world! LED = %s\n", message->IsOn ? "On" : "Off");
+    printf("Hello world! LED = %s\n", message->is_on ? "On" : "Off");
     return SactorError_NoError;
 }
 
