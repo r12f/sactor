@@ -1,6 +1,9 @@
 #ifndef SACTOR_DEBUG_H
 #define SACTOR_DEBUG_H
 
+//
+// SAL annonations
+//
 #ifndef _In_
 #define _In_
 #endif
@@ -39,7 +42,7 @@
 #define SACTOR_LOG_LEVEL_VERBOSE (6)
 
 #ifndef SACTOR_LOG_LEVEL
-#define SACTOR_LOG_LEVEL SACTOR_LOG_LEVEL_DEBUG
+#define SACTOR_LOG_LEVEL SACTOR_LOG_LEVEL_VERBOSE
 #endif
 
 #if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_FATAL)
@@ -93,8 +96,10 @@
 //
 // Actor
 //
+#ifndef SACTOR_TRACE_ACTOR_LOG
 #define SACTOR_TRACE_ACTOR_LOG(Pointer, Format, ...) \
-    SACTOR_LOGD("Actor", Pointer->get_name(), Pointer, Format, ##__VA_ARGS__)
+    SACTOR_LOGV("Actor", Pointer->get_name(), Pointer, Format, ##__VA_ARGS__)
+#endif
 
 #ifndef SACTOR_TRACE_ACTOR_CREATED
 #define SACTOR_TRACE_ACTOR_CREATED(Pointer) \
@@ -114,8 +119,10 @@
 //
 // Actor worker thread
 //
+#ifndef SACTOR_TRACE_ACTOR_WORKER_LOG
 #define SACTOR_TRACE_ACTOR_WORKER_LOG(Pointer, Format, ...) \
-    SACTOR_LOGD("Worker", Pointer->get_name(), Pointer, Format, ##__VA_ARGS__)
+    SACTOR_LOGV("Worker", Pointer->get_name(), Pointer, Format, ##__VA_ARGS__)
+#endif
 
 #ifndef SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED
 #define SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED(Pointer) \
@@ -140,8 +147,10 @@
 //
 // Actor mailbox
 //
+#ifndef SACTOR_TRACE_ACTOR_MAILBOX_LOG
 #define SACTOR_TRACE_ACTOR_MAILBOX_LOG(Pointer, Format, ...) \
-    SACTOR_LOGD("Mailbox", Pointer->actor_name_, Pointer, Format, ##__VA_ARGS__)
+    SACTOR_LOGV("Mailbox", Pointer->actor_name_, Pointer, Format, ##__VA_ARGS__)
+#endif
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_CREATED
 #define SACTOR_TRACE_ACTOR_MAILBOX_CREATED(Pointer) \
@@ -166,8 +175,10 @@
 //
 // Delay message service
 //
+#ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG
 #define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, Format, ...) \
-    SACTOR_LOGD("DMS", "DMS", Pointer, Format, ##__VA_ARGS__)
+    SACTOR_LOGV("DMS", "DMS", Pointer, Format, ##__VA_ARGS__)
+#endif
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATE
 #define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATE(Pointer) \
@@ -220,7 +231,7 @@
 #define SACTOR_ASSERT(AssertType, cond) do { \
     bool r = (cond); \
     if (!r) { \
-        SACTOR_LOGD("Assert", AssertType, nullptr, "Assertion failed: %s", #cond); \
+        SACTOR_LOGF("Assert", AssertType, nullptr, "Assertion failed: %s", #cond); \
         configASSERT(false); \
     } \
 } while (0)
