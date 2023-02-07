@@ -21,13 +21,13 @@ DelayMessageService::DelayMessageService()
 }
 
 // TimerCallback is an ISR, so we need to be careful on the API that is calls.
-void DelayMessageService::TimerCallbackISR(_In_ TimerHandle_t timer_handle)
+void DelayMessageService::timer_callback_isr(_In_ TimerHandle_t timer_handle)
 {
     DelayMessageService* dms = (DelayMessageService*)pvTimerGetTimerID(timer_handle);
-    dms->OnTimerISR();
+    dms->on_timer_isr();
 }
 
-void DelayMessageService::OnTimerISR()
+void DelayMessageService::on_timer_isr()
 {
     // Since our timer is one off shot timer, we reset the next scheduled timer tick to 0 whenever the timer is fired.
     scheduled_timer_tick_ = 0;
@@ -35,14 +35,14 @@ void DelayMessageService::OnTimerISR()
     TickType_t current_tick = xTaskGetTickCountFromISR();
 
     DelayMessageJob job;
-    while (PopDelayedMessageIfExpiredFromISR(current_tick, job)) {
+    while (pop_delayed_message_if_expired_from_isr(current_tick, job)) {
         job.Target->SendAsync(job.MessageId);
     }
 
-    AdjustScheduledTimerIfNeeded(current_tick, true /* from_isr */);
+    adjust_scheduled_timer_if_needed(current_tick, true /* from_isr */);
 }
 
-SactorError DelayMessageService::QueueDelayedMessage(_In_ ActorMailbox& mailbox, _In_ BaseType_t message_id, _In_ uint32_t delay_in_ms)
+SactorError DelayMessageService::queue_delayed_message(_In_ ActorMailbox& mailbox, _In_ BaseType_t message_id, _In_ uint32_t delay_in_ms)
 {
     SACTOR_REQUIRES(jobs_lock_handle_ != nullptr);
 
@@ -53,7 +53,7 @@ SactorError DelayMessageService::QueueDelayedMessage(_In_ ActorMailbox& mailbox,
         return SactorError_Timeout;
     }
 
-    SactorError result = QueueDelayedMessageUnderLock(mailbox, message_id, delay_in_ms);
+    SactorError result = queue_delayed_message_under_lock(mailbox, message_id, delay_in_ms);
 
     BaseType_t return_lock_result = xSemaphoreGive(jobs_lock_handle_);
     SACTOR_ENSURES(return_lock_result == pdTRUE);
@@ -63,7 +63,7 @@ SactorError DelayMessageService::QueueDelayedMessage(_In_ ActorMailbox& mailbox,
     return result;
 }
 
-SactorError DelayMessageService::QueueDelayedMessageUnderLock(_In_ ActorMailbox& mailbox, _In_ BaseType_t message_id, _In_ uint32_t delay_in_ms)
+SactorError DelayMessageService::queue_delayed_message_under_lock(_In_ ActorMailbox& mailbox, _In_ BaseType_t message_id, _In_ uint32_t delay_in_ms)
 {
     if (job_count_ == SACTOR_DELAY_MESSAGE_SERVICE_MAX_ITEM_COUNT) {
         return SactorError_QueueFull;
@@ -77,13 +77,13 @@ SactorError DelayMessageService::QueueDelayedMessageUnderLock(_In_ ActorMailbox&
     job.ExpiryTick = current_tick + pdMS_TO_TICKS(delay_in_ms);
     ++job_count_;
 
-    AdjustJobHeapBottomUp();
-    AdjustScheduledTimerIfNeeded(current_tick, false /* from_isr */);
+    adjust_job_heap_bottom_up();
+    adjust_scheduled_timer_if_needed(current_tick, false /* from_isr */);
 
     return SactorError_NoError;
 }
 
-bool DelayMessageService::PopDelayedMessageIfExpiredFromISR(_In_ TickType_t current_tick, _Out_ DelayMessageJob& job)
+bool DelayMessageService::pop_delayed_message_if_expired_from_isr(_In_ TickType_t current_tick, _Out_ DelayMessageJob& job)
 {
     SACTOR_REQUIRES(jobs_lock_handle_ != nullptr);
 
@@ -92,7 +92,7 @@ bool DelayMessageService::PopDelayedMessageIfExpiredFromISR(_In_ TickType_t curr
         return false;
     }
 
-    bool found_job = PopDelayedMessageIfExpiredUnderLock(current_tick, job);
+    bool found_job = pop_delayed_message_if_expired_under_lock(current_tick, job);
 
     BaseType_t result = xSemaphoreGiveFromISR(jobs_lock_handle_, nullptr);
     SACTOR_ENSURES(result == pdTRUE);
@@ -100,7 +100,7 @@ bool DelayMessageService::PopDelayedMessageIfExpiredFromISR(_In_ TickType_t curr
     return found_job;
 }
 
-bool DelayMessageService::PopDelayedMessageIfExpiredUnderLock(_In_ TickType_t current_tick, _Out_ DelayMessageJob& job)
+bool DelayMessageService::pop_delayed_message_if_expired_under_lock(_In_ TickType_t current_tick, _Out_ DelayMessageJob& job)
 {
     if (job_count_ == 0) {
         return false;
@@ -116,13 +116,13 @@ bool DelayMessageService::PopDelayedMessageIfExpiredUnderLock(_In_ TickType_t cu
     --job_count_;
     if (job_count_ > 0) {
         jobs_[0] = jobs_[job_count_];
-        AdjustJobHeapTopDown();
+        adjust_job_heap_top_down();
     }
 
     return true;
 }
 
-void DelayMessageService::AdjustJobHeapTopDown()
+void DelayMessageService::adjust_job_heap_top_down()
 {
     int job_index = 0;
     DelayMessageJob temp = jobs_[job_index];
@@ -146,7 +146,7 @@ void DelayMessageService::AdjustJobHeapTopDown()
     jobs_[job_index] = temp;
 }
 
-void DelayMessageService::AdjustJobHeapBottomUp()
+void DelayMessageService::adjust_job_heap_bottom_up()
 {
     SACTOR_REQUIRES(job_count_ > 0);
 
@@ -167,24 +167,24 @@ void DelayMessageService::AdjustJobHeapBottomUp()
     jobs_[job_index] = temp;
 }
 
-void DelayMessageService::AdjustScheduledTimerIfNeeded(_In_ TickType_t current_tick, _In_ bool from_isr)
+void DelayMessageService::adjust_scheduled_timer_if_needed(_In_ TickType_t current_tick, _In_ bool from_isr)
 {
     SACTOR_REQUIRES(timer_handle_ != nullptr);
 
     // If no more jobs, stop the timer.
     if (job_count_ == 0) {
         if (xTimerIsTimerActive(timer_handle_)) {
-            StopTimer(from_isr);
+            stop_timer(from_isr);
         }
 
         return;
     }
 
     // If has job, check the closest job and set the timer to it.
-    ScheduleTimer(current_tick, from_isr);
+    schedule_timer(current_tick, from_isr);
 }
 
-void DelayMessageService::ScheduleTimer(_In_ TickType_t current_tick, _In_ bool from_isr)
+void DelayMessageService::schedule_timer(_In_ TickType_t current_tick, _In_ bool from_isr)
 {
     SACTOR_REQUIRES(job_count_ > 0);
 
@@ -214,7 +214,7 @@ void DelayMessageService::ScheduleTimer(_In_ TickType_t current_tick, _In_ bool 
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED(this, new_deadline_tick);
 }
 
-void DelayMessageService::StopTimer(_In_ bool from_isr)
+void DelayMessageService::stop_timer(_In_ bool from_isr)
 {
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_STOP(this);
 

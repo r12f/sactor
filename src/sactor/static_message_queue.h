@@ -12,13 +12,13 @@ class StaticMessageQueueTx
 
 public:
     StaticMessageQueueTx();
-    SactorError Send(_In_ void* item);
-    SactorError SendFromISR(_In_ void* item);
+    SactorError send(_In_ void* item);
+    SactorError send_from_isr(_In_ void* item);
 
 private:
     template <class ItemType>
     friend class StaticMessageQueue;
-    void SetQueueHandle(_In_ QueueHandle_t queue);
+    void set_queue_handle(_In_ QueueHandle_t queue);
 };
 
 class StaticMessageQueueRx
@@ -27,13 +27,13 @@ class StaticMessageQueueRx
 
 public:
     StaticMessageQueueRx();
-    SactorError Receive(_Out_ void* item, _In_ TickType_t timeout_ms = 0);
-    SactorError ReceiveFromISR(_Out_ void* item);
+    SactorError receive(_Out_ void* item, _In_ TickType_t timeout_ms = 0);
+    SactorError receive_from_isr(_Out_ void* item);
 
 private:
     template <class ItemType>
     friend class StaticMessageQueue;
-    void SetQueueHandle(_In_ QueueHandle_t queue);
+    void set_queue_handle(_In_ QueueHandle_t queue);
 };
 
 template <class ItemType>
@@ -53,8 +53,8 @@ public:
         queue_ = xQueueCreateStatic(item_count, sizeof(ItemType), queue_buffer, &queue_ctrl_);
         SACTOR_ENSURES(queue_ != nullptr);
 
-        tx_.SetQueueHandle(queue_);
-        rx_.SetQueueHandle(queue_);
+        tx_.set_queue_handle(queue_);
+        rx_.set_queue_handle(queue_);
     }
 
     ~StaticMessageQueue() {

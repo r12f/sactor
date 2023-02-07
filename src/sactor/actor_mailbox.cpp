@@ -70,7 +70,7 @@ SactorError ActorMailbox::Tx::SendRecvSyncRaw(_In_ BaseType_t message_id, _In_op
 SactorError ActorMailbox::Tx::QueueRequestRaw(_In_ const MailboxItem& mailbox_item)
 {
     SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(actor_name_, this, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
-    return queue_.Tx().Send((void *)&mailbox_item);
+    return queue_.Tx().send((void *)&mailbox_item);
 }
 
 ActorMailbox::Rx::Rx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox)
@@ -81,7 +81,7 @@ ActorMailbox::Rx::Rx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox)
 SactorError ActorMailbox::Rx::DispatchOneMessage(_In_ OnMessageFunc on_message, _In_ void* parameter)
 {
     MailboxItem mailbox_item;
-    SactorError result = queue_.Rx().Receive(&mailbox_item, SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS);
+    SactorError result = queue_.Rx().receive(&mailbox_item, SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS);
     if (result == SactorError_QueueEmpty) {
         return result;
     }

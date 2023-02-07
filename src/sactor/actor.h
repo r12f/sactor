@@ -86,7 +86,7 @@ public:
     }
 
 protected:
-    SactorError QueueDelayedMessage(_In_ BaseType_t message_id, _In_ uint32_t delay_in_ms);
+    SactorError queue_delayed_message(_In_ BaseType_t message_id, _In_ uint32_t delay_in_ms);
 };
 
 #endif

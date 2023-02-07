@@ -17,12 +17,12 @@ ActorWorkerThreadBase::~ActorWorkerThreadBase()
     }
 }
 
-ActorMailbox& ActorWorkerThreadBase::GetMailbox()
+ActorMailbox& ActorWorkerThreadBase::get_mailbox()
 {
     return mailbox_;
 }
 
-void ActorWorkerThreadBase::StartWithParams(_In_ uint32_t stack_word_count, _In_ StackType_t* stack_buffer, _In_ UBaseType_t priority)
+void ActorWorkerThreadBase::start_with_params(_In_ uint32_t stack_word_count, _In_ StackType_t* stack_buffer, _In_ UBaseType_t priority)
 {
     SACTOR_TRACE_ACTOR_WORKER_THREAD_START(name_, this);
 
@@ -40,13 +40,13 @@ void ActorWorkerThreadBase::StartWithParams(_In_ uint32_t stack_word_count, _In_
     SACTOR_ENSURES(task_ != nullptr);
 }
 
-void ActorWorkerThreadBase::ActorWorkerTaskProc(_In_ void* parameter)
+void ActorWorkerThreadBase::actor_worker_task_proc(_In_ void* parameter)
 {
     ActorWorkerThreadBase* worker = (ActorWorkerThreadBase*)(parameter);
-    worker->TaskProc();
+    worker->task_proc();
 }
 
-void ActorWorkerThreadBase::TaskProc()
+void ActorWorkerThreadBase::task_proc()
 {
     SACTOR_TRACE_ACTOR_WORKER_THREAD_TASK_LOOP_ENTERED(name_, this);
 

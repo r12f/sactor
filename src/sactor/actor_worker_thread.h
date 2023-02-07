@@ -20,13 +20,13 @@ protected:
     // We don't need to make this function virtual, because we never cast the ActorWorkerThread pointer to ActorWorkerThreadBase pointer.
     ~ActorWorkerThreadBase();
 
-    ActorMailbox& GetMailbox();
+    ActorMailbox& get_mailbox();
 
-    void StartWithParams(_In_ uint32_t stack_word_count, _In_ StackType_t* stack_buffer, _In_ UBaseType_t priority);
+    void start_with_params(_In_ uint32_t stack_word_count, _In_ StackType_t* stack_buffer, _In_ UBaseType_t priority);
 
 private:
-    static void ActorWorkerTaskProc(_In_ void* parameter);
-    void TaskProc();
+    static void actor_worker_task_proc(_In_ void* parameter);
+    void task_proc();
 };
 
 template <class T>
@@ -44,8 +44,8 @@ public:
     }
 
     void Start() { 
-        StartWithParams(T::StackWordCount, stack_buffer_, T::Priority);
-        GetMailbox().Tx().SendAsync(MESSAGE_ID_INIT);
+        start_with_params(T::StackWordCount, stack_buffer_, T::Priority);
+        get_mailbox().Tx().SendAsync(MESSAGE_ID_INIT);
     }
 
 private:
