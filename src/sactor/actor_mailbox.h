@@ -15,8 +15,8 @@ class ActorMailbox
 
         MailboxItem();
         MailboxItem(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer, _Out_ volatile bool* completed);
-        void WaitCompleted();
-        void MarkCompleted();
+        void wait_completed();
+        void mark_completed();
     };
 
 public:
@@ -29,24 +29,24 @@ public:
         template <class MessageType>
         SactorError SendSync(_In_ const MessageType& message)
         {
-            return SendRecvSyncRaw(MessageType::Id, &message, nullptr);
+            return send_recv_sync_raw(MessageType::Id, &message, nullptr);
         }
 
         template <class MessageType, class ReplyType>
         SactorError SendRecvSync(_In_ const MessageType& message, _Out_ ReplyType& reply)
         {
-            return SendRecvSyncRaw(MessageType::Id, &message, reply);
+            return send_recv_sync_raw(MessageType::Id, &message, reply);
         }
 
-        SactorError SendAsync(_In_ BaseType_t message_id);
+        SactorError send_async(_In_ BaseType_t message_id);
 
     private:
         // ActorMailboxTx can only be created by ActorMailbox.
         friend class ActorMailbox;
         Tx(const char* actor_name, _In_ ActorMailbox& mailbox);
 
-        SactorError SendRecvSyncRaw(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer);
-        SactorError QueueRequestRaw(_In_ const MailboxItem& mailbox_item);
+        SactorError send_recv_sync_raw(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer);
+        SactorError queue_request_raw(_In_ const MailboxItem& mailbox_item);
     };
 
     class Rx
@@ -57,7 +57,7 @@ public:
     public:
         typedef SactorError (*OnMessageFunc)(_In_ void* parameter, _In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer);
 
-        SactorError DispatchOneMessage(_In_ OnMessageFunc on_message, _In_ void* parameter);
+        SactorError dispatch_one_message(_In_ OnMessageFunc on_message, _In_ void* parameter);
 
     private:
         // ActorMailboxRx can only be created by ActorMailbox.

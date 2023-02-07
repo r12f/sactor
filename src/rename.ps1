@@ -19,5 +19,5 @@ Get-ChildItem -Recurse -Include *.h,*.cpp | % {
 
     $fc = gc $f;
     $pairs | % { $p = $_; $fc = $fc.Replace($p.Old, $p.New) }
-    $fc# | Set-Content $f
+    $fc | Set-Content $f
 }

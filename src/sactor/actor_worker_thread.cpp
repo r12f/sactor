@@ -51,7 +51,7 @@ void ActorWorkerThreadBase::task_proc()
     SACTOR_TRACE_ACTOR_WORKER_THREAD_TASK_LOOP_ENTERED(name_, this);
 
     for (;;) {
-        SactorError result = mailbox_.Rx().DispatchOneMessage(on_message_, on_message_param_);
+        SactorError result = mailbox_.Rx().dispatch_one_message(on_message_, on_message_param_);
         if (result == SactorError_TaskStopped) {
             break;
         }

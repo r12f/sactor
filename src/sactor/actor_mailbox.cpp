@@ -14,7 +14,7 @@ ActorMailbox::MailboxItem::MailboxItem(_In_ BaseType_t message_id, _In_opt_ cons
 {
 }
 
-void ActorMailbox::MailboxItem::WaitCompleted()
+void ActorMailbox::MailboxItem::wait_completed()
 {
     static TickType_t backoff_delays[] = { 1, 5, 10, 50, 100, 500, 1000, 4000 };
 
@@ -31,7 +31,7 @@ void ActorMailbox::MailboxItem::WaitCompleted()
     }
 }
 
-void ActorMailbox::MailboxItem::MarkCompleted()
+void ActorMailbox::MailboxItem::mark_completed()
 {
     if (Completed == nullptr) {
         return;
@@ -46,28 +46,28 @@ ActorMailbox::Tx::Tx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox)
     , queue_(mailbox.queue_)
 {}
 
-SactorError ActorMailbox::Tx::SendAsync(_In_ BaseType_t message_id)
+SactorError ActorMailbox::Tx::send_async(_In_ BaseType_t message_id)
 {
     MailboxItem mailbox_item { message_id, nullptr, nullptr, nullptr };
-    return QueueRequestRaw(mailbox_item);
+    return queue_request_raw(mailbox_item);
 }
 
-SactorError ActorMailbox::Tx::SendRecvSyncRaw(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer)
+SactorError ActorMailbox::Tx::send_recv_sync_raw(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer)
 {
     volatile bool completed = false;
     MailboxItem mailbox_item { message_id, message_buffer, reply_buffer, &completed };
 
-    SactorError result = QueueRequestRaw(mailbox_item);
+    SactorError result = queue_request_raw(mailbox_item);
     if (result != SactorError_NoError) {
         return result;
     }
 
-    mailbox_item.WaitCompleted();
+    mailbox_item.wait_completed();
 
     return result;
 }
 
-SactorError ActorMailbox::Tx::QueueRequestRaw(_In_ const MailboxItem& mailbox_item)
+SactorError ActorMailbox::Tx::queue_request_raw(_In_ const MailboxItem& mailbox_item)
 {
     SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(actor_name_, this, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
     return queue_.Tx().send((void *)&mailbox_item);
@@ -78,7 +78,7 @@ ActorMailbox::Rx::Rx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox)
     , queue_(mailbox.queue_)
 {}
 
-SactorError ActorMailbox::Rx::DispatchOneMessage(_In_ OnMessageFunc on_message, _In_ void* parameter)
+SactorError ActorMailbox::Rx::dispatch_one_message(_In_ OnMessageFunc on_message, _In_ void* parameter)
 {
     MailboxItem mailbox_item;
     SactorError result = queue_.Rx().receive(&mailbox_item, SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS);
@@ -90,7 +90,7 @@ SactorError ActorMailbox::Rx::DispatchOneMessage(_In_ OnMessageFunc on_message, 
     result = on_message(parameter, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
 
     SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(actor_name_, this, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
-    mailbox_item.MarkCompleted();
+    mailbox_item.mark_completed();
 
     return result;
 }

@@ -36,7 +36,7 @@ void DelayMessageService::on_timer_isr()
 
     DelayMessageJob job;
     while (pop_delayed_message_if_expired_from_isr(current_tick, job)) {
-        job.Target->SendAsync(job.MessageId);
+        job.Target->send_async(job.MessageId);
     }
 
     adjust_scheduled_timer_if_needed(current_tick, true /* from_isr */);

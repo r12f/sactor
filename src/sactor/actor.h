@@ -32,8 +32,8 @@ public:
         return mailbox_.Tx().SendRecvSync(message, reply);
     }
 
-    SactorError SendAsync(_In_ BaseType_t message_id) {
-        return mailbox_.Tx().SendAsync(message_id);
+    SactorError send_async(_In_ BaseType_t message_id) {
+        return mailbox_.Tx().send_async(message_id);
     }
 
 protected:
