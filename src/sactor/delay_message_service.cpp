@@ -36,7 +36,7 @@ void DelayMessageService::on_timer_isr()
 
     DelayMessageJob job;
     while (pop_delayed_message_if_expired_from_isr(current_tick, job)) {
-        job.Target->send_async(job.MessageId);
+        job.target->send_async(job.message_id);
     }
 
     adjust_scheduled_timer_if_needed(current_tick, true /* from_isr */);
@@ -72,9 +72,9 @@ SactorError DelayMessageService::queue_delayed_message_under_lock(_In_ ActorMail
     TickType_t current_tick = xTaskGetTickCount();
 
     DelayMessageJob& job = jobs_[job_count_];
-    job.Target = &mailbox.tx();
-    job.MessageId = message_id;
-    job.ExpiryTick = current_tick + pdMS_TO_TICKS(delay_in_ms);
+    job.target = &mailbox.tx();
+    job.message_id = message_id;
+    job.expiry_tick = current_tick + pdMS_TO_TICKS(delay_in_ms);
     ++job_count_;
 
     adjust_job_heap_bottom_up();
@@ -106,7 +106,7 @@ bool DelayMessageService::pop_delayed_message_if_expired_under_lock(_In_ TickTyp
         return false;
     }
 
-    if (current_tick < jobs_[0].ExpiryTick) {
+    if (current_tick < jobs_[0].expiry_tick) {
         return false;
     }
 
@@ -130,11 +130,11 @@ void DelayMessageService::adjust_job_heap_top_down()
     int child_job_index = 2 * job_index + 1;
     while (child_job_index < job_count_) {
         // Find the smaller one to move up.
-        if (child_job_index + 1 < job_count_ && jobs_[child_job_index + 1].ExpiryTick < jobs_[child_job_index].ExpiryTick) {
+        if (child_job_index + 1 < job_count_ && jobs_[child_job_index + 1].expiry_tick < jobs_[child_job_index].expiry_tick) {
             ++child_job_index;
         }
 
-        if (jobs_[child_job_index].ExpiryTick > jobs_[job_index].ExpiryTick) {
+        if (jobs_[child_job_index].expiry_tick > jobs_[job_index].expiry_tick) {
             break;
         }
 
@@ -155,7 +155,7 @@ void DelayMessageService::adjust_job_heap_bottom_up()
 
     int parent_job_index = (job_index - 1) / 2;
     while (parent_job_index >= 0 && job_index != 0) {
-        if (jobs_[parent_job_index].ExpiryTick <= jobs_[job_index].ExpiryTick) {
+        if (jobs_[parent_job_index].expiry_tick <= jobs_[job_index].expiry_tick) {
             break;
         }
 
@@ -189,7 +189,7 @@ void DelayMessageService::schedule_timer(_In_ TickType_t current_tick, _In_ bool
     SACTOR_REQUIRES(job_count_ > 0);
 
     // If current scheduled tick is the same as the required one, don't do anything.
-    TickType_t expiry_tick = jobs_[0].ExpiryTick;
+    TickType_t expiry_tick = jobs_[0].expiry_tick;
     if (expiry_tick == scheduled_timer_tick_) {
         return;
     }

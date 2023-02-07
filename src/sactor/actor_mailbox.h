@@ -7,14 +7,15 @@ class ActorMailbox
 {
     struct MailboxItem
     {
-        BaseType_t MessageId;
-        const void* MessageBuffer;
-        void* ReplyBuffer;
-        volatile bool* Completed;
-        TaskHandle_t SenderTask;
+        BaseType_t message_id;
+        const void* message_buffer;
+        void* reply_buffer;
+        volatile bool* completed;
+        TaskHandle_t sender_task;
 
         MailboxItem();
         MailboxItem(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer, _Out_ volatile bool* completed);
+
         void wait_completed();
         void mark_completed();
     };

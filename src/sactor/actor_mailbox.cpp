@@ -6,11 +6,11 @@ ActorMailbox::MailboxItem::MailboxItem()
 }
 
 ActorMailbox::MailboxItem::MailboxItem(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer, _Out_ volatile bool* completed)
-    : MessageId(message_id)
-    , MessageBuffer(message_buffer)
-    , ReplyBuffer(reply_buffer)
-    , Completed(completed)
-    , SenderTask(xTaskGetCurrentTaskHandle())
+    : message_id(message_id)
+    , message_buffer(message_buffer)
+    , reply_buffer(reply_buffer)
+    , completed(completed)
+    , sender_task(xTaskGetCurrentTaskHandle())
 {
 }
 
@@ -18,12 +18,12 @@ void ActorMailbox::MailboxItem::wait_completed()
 {
     static TickType_t backoff_delays[] = { 1, 5, 10, 50, 100, 500, 1000, 4000 };
 
-    if (Completed == nullptr) {
+    if (completed == nullptr) {
         return;
     }
 
     uint32_t index = 0;
-    while (!*Completed) {
+    while (!*completed) {
         vTaskDelay(backoff_delays[index]);
         if (index < (sizeof(backoff_delays) / sizeof(TickType_t)) - 1) {
             ++index;
@@ -33,12 +33,12 @@ void ActorMailbox::MailboxItem::wait_completed()
 
 void ActorMailbox::MailboxItem::mark_completed()
 {
-    if (Completed == nullptr) {
+    if (completed == nullptr) {
         return;
     }
 
-    *Completed = true;
-    xTaskAbortDelay(SenderTask);
+    *completed = true;
+    xTaskAbortDelay(sender_task);
 }
 
 ActorMailbox::Tx::Tx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox)
@@ -69,7 +69,7 @@ SactorError ActorMailbox::Tx::send_recv_sync_raw(_In_ BaseType_t message_id, _In
 
 SactorError ActorMailbox::Tx::queue_request_raw(_In_ const MailboxItem& mailbox_item)
 {
-    SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(actor_name_, this, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
+    SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(actor_name_, this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
     return queue_.tx().send((void *)&mailbox_item);
 }
 
@@ -86,10 +86,10 @@ SactorError ActorMailbox::Rx::dispatch_one_message(_In_ OnMessageFunc on_message
         return result;
     }
 
-    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE(actor_name_, this, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
-    result = on_message(parameter, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
+    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE(actor_name_, this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
+    result = on_message(parameter, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
 
-    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(actor_name_, this, mailbox_item.MessageId, mailbox_item.MessageBuffer, mailbox_item.ReplyBuffer);
+    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(actor_name_, this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
     mailbox_item.mark_completed();
 
     return result;
