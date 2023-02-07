@@ -18,7 +18,6 @@ build-all:
     just build "blinky_hello"
     just build "actor_pool"
     just build "timer"
-    just build "arduino_blinky_hello"
 
 build EXAMPLE_NAME="blinky_hello" ENV="seeed_xiao_esp32c3":
     @just _log-head "Building example: {{EXAMPLE_NAME}}"
