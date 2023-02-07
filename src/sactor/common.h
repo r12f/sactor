@@ -2,11 +2,13 @@
 #define SACTOR_COMMON_H
 
 #ifndef SACTOR_USE_CUSTOM_FREERTOS
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/timers.h"
-#include "freertos/semphr.h"
-#include "freertos/queue.h"
+    #include "freertos/FreeRTOS.h"
+    #include "freertos/task.h"
+    #include "freertos/timers.h"
+    #include "freertos/semphr.h"
+    #include "freertos/queue.h"
+#else
+    #include "FreeRTOSImport.h"
 #endif
 
 #include "sactor/config.h"

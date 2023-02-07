@@ -14,19 +14,22 @@ RELEASE_PACKAGE := OUT_DIR + "/sactor-package" + "-" + VERSION + ".zip"
 
 set shell := ["nu", "-c"]
 
-build-examples:
-    just build-example "blinky_hello"
-    just build-example "actor_pool"
-    just build-example "timer"
+build-all:
+    just build "blinky_hello"
+    just build "actor_pool"
+    just build "timer"
+    just build "arduino_blinky_hello"
 
-build-example EXAMPLE_NAME="blinky_hello":
+build EXAMPLE_NAME="blinky_hello" ENV="seeed_xiao_esp32c3":
     @just _log-head "Building example: {{EXAMPLE_NAME}}"
-    @cd "{{EXAMPLE_DIR}}/{{EXAMPLE_NAME}}"; pio run
+    @cd "{{EXAMPLE_DIR}}/{{EXAMPLE_NAME}}"; pio run -e "{{ENV}}"
 
-upload-example EXAMPLE_NAME="blinky_hello":
-    @cd "{{EXAMPLE_DIR}}/{{EXAMPLE_NAME}}"; pio run --target upload
+upload EXAMPLE_NAME="blinky_hello" ENV="seeed_xiao_esp32c3":
+    @just _log-head "Building and uploading example: {{EXAMPLE_NAME}}"
+    @cd "{{EXAMPLE_DIR}}/{{EXAMPLE_NAME}}"; pio run --target upload -e "{{ENV}}"
 
 pack:
+    @just _log-head "Packing source code to {{RELEASE_PACKAGE}} ..."
     @cd "{{ROOT_DIR}}"; rm --force "{{RELEASE_PACKAGE}}"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./src"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./LICENSE"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./README.md"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./library.*"; 7z -tzip a "{{RELEASE_PACKAGE}}" "./examples";
 
 publish:
