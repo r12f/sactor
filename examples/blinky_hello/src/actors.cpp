@@ -7,7 +7,7 @@
 ActorHello hello;
 ActorBlinky blinky;
 
-SactorError ActorBlinkyImpl::OnInit()
+SactorError ActorBlinkyImpl::on_init()
 {
     esp_rom_gpio_pad_select_gpio(BLINK_GPIO);
     gpio_set_direction(BLINK_GPIO, GPIO_MODE_OUTPUT);

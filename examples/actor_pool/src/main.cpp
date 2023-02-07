@@ -1,8 +1,8 @@
 #include "actors.h"
 
 extern "C" void app_main() {
-    ledCtrl0.Start();
-    ledCtrl1.Start();
-    ledCtrl2.Start();
+    led_ctrl_0.Start();
+    led_ctrl_1.Start();
+    led_ctrl_2.Start();
     scheduler.Start();
 }

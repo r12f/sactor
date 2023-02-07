@@ -9,37 +9,36 @@ class ActorSchedulerImpl : public ActorImpl
     bool isOn_;
 
 public:
-    static constexpr const char* Name = "ActorScheduler";
-    static constexpr uint32_t StackWordCount = 2048;
+    static constexpr const char* NAME = "ActorScheduler";
 
     ActorSchedulerImpl() : isOn_(true) {}
 
     MESSAGE_MAP_BEGIN()
-        ON_INIT_MESSAGE(ActorSchedulerImpl, OnInit)
-        ON_MESSAGE_NO_PAYLOAD(ActorSchedulerImpl, OnScheduleTimer, ScheduleTimerMessage)
+        ON_INIT_MESSAGE(ActorSchedulerImpl, on_init)
+        ON_MESSAGE_NO_PAYLOAD(ActorSchedulerImpl, on_schedule_timer, ScheduleTimerMessage)
     MESSAGE_MAP_END()
 
 private:
-    SactorError OnInit();
-    SactorError OnScheduleTimer();
+    SactorError on_init();
+    SactorError on_schedule_timer();
 };
 
 class ActorLedCtrlImpl : public ActorImpl
 {
 public:
-    static constexpr const char* Name = "ActorLedCtrl";
+    static constexpr const char* NAME = "ActorLedCtrl";
 
     MESSAGE_MAP_BEGIN()
-        ON_MESSAGE_NO_REPLY(ActorLedCtrlImpl, OnControl, ControlMessage)
+        ON_MESSAGE_NO_REPLY(ActorLedCtrlImpl, on_control, ControlMessage)
     MESSAGE_MAP_END()
 
 private:
-    SactorError OnControl(_In_ const ControlMessage* message);
+    SactorError on_control(_In_ const ControlMessage* message);
 };
 
 typedef Actor<ActorSchedulerImpl> ActorScheduler;
 typedef PooledActor<ActorLedCtrlImpl> ActorLedCtrl;
 
 extern ActorScheduler scheduler;
-extern ActorMailbox actorPoolMailbox;
+extern ActorMailbox actor_pool_mailbox;
 extern ActorLedCtrl ledCtrl;

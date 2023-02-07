@@ -104,7 +104,7 @@ ActorMailbox::ActorMailbox(_In_ const char* actor_name, _In_ uint8_t* queue_buff
     SACTOR_TRACE_ACTOR_MAILBOX_CREATED(actor_name, this);
 }
 
-const char* ActorMailbox::GetActorName() const
+const char* ActorMailbox::get_actor_name() const
 {
     return actor_name_;
 }

@@ -46,7 +46,7 @@ SactorError DelayMessageService::queue_delayed_message(_In_ ActorMailbox& mailbo
 {
     SACTOR_REQUIRES(jobs_lock_handle_ != nullptr);
 
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUE(this, mailbox.GetActorName(), &mailbox, message_id, delay_in_ms);
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUE(this, mailbox.get_actor_name(), &mailbox, message_id, delay_in_ms);
 
     if (xSemaphoreTake(jobs_lock_handle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS)) != pdTRUE) {
         SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOCK_TAKE_TIMEOUT(this);
@@ -58,7 +58,7 @@ SactorError DelayMessageService::queue_delayed_message(_In_ ActorMailbox& mailbo
     BaseType_t return_lock_result = xSemaphoreGive(jobs_lock_handle_);
     SACTOR_ENSURES(return_lock_result == pdTRUE);
 
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUED(this, mailbox.GetActorName(), &mailbox, message_id, delay_in_ms);
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUED(this, mailbox.get_actor_name(), &mailbox, message_id, delay_in_ms);
 
     return result;
 }

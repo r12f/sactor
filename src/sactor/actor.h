@@ -17,9 +17,9 @@ class ActorCommon
 
 public:
     void Start() {
-        SACTOR_TRACE_ACTOR_START(T::Name, this);
+        SACTOR_TRACE_ACTOR_START(T::NAME, this);
         worker_.Start();
-        SACTOR_TRACE_ACTOR_STARTED(T::Name, this);
+        SACTOR_TRACE_ACTOR_STARTED(T::NAME, this);
     }
 
     template <class MessageType>
@@ -42,7 +42,7 @@ protected:
         , worker_(mailbox, impl_)
     {
         impl_.mailbox_ = &mailbox;
-        SACTOR_TRACE_ACTOR_CREATED(T::Name, this);
+        SACTOR_TRACE_ACTOR_CREATED(T::NAME, this);
     }
 };
 
@@ -50,12 +50,12 @@ template <class T>
 class Actor : public ActorCommon<T>
 {
     ActorMailbox mailbox_impl_;
-    uint8_t mailbox_queue_buffer[ActorMailbox::ItemSize * T::QueueSize];
+    uint8_t mailbox_queue_buffer[ActorMailbox::ItemSize * T::QUEUE_SIZE];
 
 public:
     Actor()
         : ActorCommon<T>(mailbox_impl_)
-        , mailbox_impl_(T::Name, mailbox_queue_buffer, T::QueueSize)
+        , mailbox_impl_(T::NAME, mailbox_queue_buffer, T::QUEUE_SIZE)
     {}
 };
 
@@ -76,10 +76,10 @@ class ActorImpl
     ActorMailbox* mailbox_;
 
 public:
-    static constexpr const char* Name = "actor";
-    static constexpr uint32_t StackWordCount = 2048;
-    static constexpr UBaseType_t Priority = 1;
-    static constexpr BaseType_t QueueSize = 10;
+    static constexpr const char* NAME = "actor";
+    static constexpr uint32_t STACK_WORD_COUNT = 2048;
+    static constexpr UBaseType_t PRIORITY = 1;
+    static constexpr BaseType_t QUEUE_SIZE = 10;
 
     SactorError ProcessIncomingMessage(_In_ BaseType_t message_id, _In_opt_ void* message, _In_opt_ void* message_reply) {
         return SactorError_NoError;

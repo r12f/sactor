@@ -75,7 +75,7 @@ public:
     static const uint32_t ItemSize = sizeof(MailboxItem);
 
     ActorMailbox(_In_ const char* actor_name, _In_ uint8_t* queue_buffer, uint32_t item_count);
-    const char* GetActorName() const;
+    const char* get_actor_name() const;
     Tx& tx();
     Rx& rx();
 };

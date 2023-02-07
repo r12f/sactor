@@ -9,12 +9,12 @@
 ActorScheduler scheduler;
 
 uint8_t actorPoolMailboxQueueBuffer[ActorMailbox::ItemSize * 100];
-ActorMailbox actorPoolMailbox { "LedCtrl*", actorPoolMailboxQueueBuffer, 100 };
-ActorLedCtrl ledCtrl0 { actorPoolMailbox };
-ActorLedCtrl ledCtrl1 { actorPoolMailbox };
-ActorLedCtrl ledCtrl2 { actorPoolMailbox };
+ActorMailbox actor_pool_mailbox { "LedCtrl*", actorPoolMailboxQueueBuffer, 100 };
+ActorLedCtrl led_ctrl_0 { actor_pool_mailbox };
+ActorLedCtrl led_ctrl_1 { actor_pool_mailbox };
+ActorLedCtrl led_ctrl_2 { actor_pool_mailbox };
 
-SactorError ActorSchedulerImpl::OnInit()
+SactorError ActorSchedulerImpl::on_init()
 {
     static gpio_num_t ledPins[3] = { LED0_GPIO, LED1_GPIO, LED2_GPIO };
 
@@ -29,7 +29,7 @@ SactorError ActorSchedulerImpl::OnInit()
         printf("Schedule LED status update: Status = %s\n", isOn ? "On" : "Off");
 
         for (gpio_num_t ledPin : ledPins) {
-            actorPoolMailbox.tx().send_sync(ControlMessage { ledPin, isOn });
+            actor_pool_mailbox.tx().send_sync(ControlMessage { ledPin, isOn });
         }
         isOn = !isOn;
 
@@ -37,7 +37,7 @@ SactorError ActorSchedulerImpl::OnInit()
     }
 }
 
-SactorError ActorLedCtrlImpl::OnControl(_In_ const ControlMessage* message)
+SactorError ActorLedCtrlImpl::on_control(_In_ const ControlMessage* message)
 {
     printf("Updating LED Status: Actor = %p, Pin = %d, Status = %s\n", this, message->Pin, message->IsOn ? "On" : "Off");
     gpio_set_level(message->Pin, message->IsOn ? 1 : 0);

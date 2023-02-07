@@ -7,7 +7,7 @@ ActorBlinky blinky;
 #define LED_BUILTIN 10
 #endif
 
-SactorError ActorBlinkyImpl::OnInit()
+SactorError ActorBlinkyImpl::on_init()
 {
     pinMode(LED_BUILTIN, OUTPUT);
 

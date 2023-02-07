@@ -32,19 +32,19 @@ private:
 template <class T>
 class ActorWorkerThread : public ActorWorkerThreadBase
 {
-    StackType_t stack_buffer_[T::StackWordCount];
+    StackType_t stack_buffer_[T::STACK_WORD_COUNT];
     T& actor_impl_;
 
 public:
     ActorWorkerThread(_In_ ActorMailbox& mailbox, _In_ T& actor_impl)
-        : ActorWorkerThreadBase(T::Name, mailbox, DispatchIncomingMessageProc, (void*)this)
+        : ActorWorkerThreadBase(T::NAME, mailbox, DispatchIncomingMessageProc, (void*)this)
         , actor_impl_(actor_impl)
     {
-        SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED(T::Name, this);
+        SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED(T::NAME, this);
     }
 
     void Start() { 
-        start_with_params(T::StackWordCount, stack_buffer_, T::Priority);
+        start_with_params(T::STACK_WORD_COUNT, stack_buffer_, T::PRIORITY);
         get_mailbox().tx().send_async(MESSAGE_ID_INIT);
     }
 

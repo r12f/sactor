@@ -7,14 +7,14 @@
 class ActorHelloImpl : public ActorImpl
 {
 public:
-    static constexpr const char* Name = "ActorHello";
+    static constexpr const char* NAME = "ActorHello";
 
     MESSAGE_MAP_BEGIN()
-        ON_MESSAGE_NO_REPLY(ActorHelloImpl, OnHello, HelloMessage)
+        ON_MESSAGE_NO_REPLY(ActorHelloImpl, on_hello, HelloMessage)
     MESSAGE_MAP_END()
 
 private:
-    SactorError OnHello(_In_ const HelloMessage* message) {
+    SactorError on_hello(_In_ const HelloMessage* message) {
         printf("Hello world! LED = %s\n", message->IsOn ? "On" : "Off");
         return SactorError_NoError;
     }
@@ -23,14 +23,14 @@ private:
 class ActorBlinkyImpl : public ActorImpl
 {
 public:
-    static constexpr const char* Name = "ActorBlinky";
+    static constexpr const char* NAME = "ActorBlinky";
 
     MESSAGE_MAP_BEGIN()
-        ON_INIT_MESSAGE(ActorBlinkyImpl, OnInit)
+        ON_INIT_MESSAGE(ActorBlinkyImpl, on_init)
     MESSAGE_MAP_END()
 
 private:
-    SactorError OnInit();
+    SactorError on_init();
 };
 
 typedef Actor<ActorHelloImpl> ActorHello;
