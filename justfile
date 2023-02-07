@@ -5,7 +5,7 @@ COLOR_BLUE := '(ansi blue)'
 COLOR_RED := '(ansi r)'
 COLOR_NONE := '(ansi reset)'
 
-VERSION := '0.1.0'
+VERSION := '0.1.1'
 
 ROOT_DIR := replace(justfile_directory(), "\\", "/")
 EXAMPLE_DIR := ROOT_DIR + "/examples"
