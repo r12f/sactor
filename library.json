@@ -1,6 +1,6 @@
 {
     "name": "Sactor",
-    "version": "0.1.1",
+    "version": "0.2.0",
     "description": "A light-weighted actor model framework based on FreeRTOS, designed for small IoT devices such as MCUs.",
     "keywords": "actor, FreeRTOS, rtos",
     "repository":
