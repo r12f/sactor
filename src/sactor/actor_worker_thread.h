@@ -20,6 +20,7 @@ protected:
     // We don't need to make this function virtual, because we never cast the ActorWorkerThread pointer to ActorWorkerThreadBase pointer.
     ~ActorWorkerThreadBase();
 
+    const char* get_name() const;
     ActorMailbox& get_mailbox();
 
     void start_with_params(_In_ uint32_t stack_word_count, _In_ StackType_t* stack_buffer, _In_ UBaseType_t priority);
@@ -40,7 +41,7 @@ public:
         : ActorWorkerThreadBase(T::NAME, mailbox, DispatchIncomingMessageProc, (void*)this)
         , actor_impl_(actor_impl)
     {
-        SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED(T::NAME, this);
+        SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED(this);
     }
 
     void Start() { 

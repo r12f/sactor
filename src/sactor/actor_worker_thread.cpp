@@ -17,6 +17,11 @@ ActorWorkerThreadBase::~ActorWorkerThreadBase()
     }
 }
 
+const char* ActorWorkerThreadBase::get_name() const
+{
+    return name_;
+}
+
 ActorMailbox& ActorWorkerThreadBase::get_mailbox()
 {
     return mailbox_;
@@ -24,7 +29,7 @@ ActorMailbox& ActorWorkerThreadBase::get_mailbox()
 
 void ActorWorkerThreadBase::start_with_params(_In_ uint32_t stack_word_count, _In_ StackType_t* stack_buffer, _In_ UBaseType_t priority)
 {
-    SACTOR_TRACE_ACTOR_WORKER_THREAD_START(name_, this);
+    SACTOR_TRACE_ACTOR_WORKER_THREAD_START(this);
 
     task_ = xTaskCreateStatic(
         &ActorWorkerThreadBase::actor_worker_task_proc,
@@ -35,7 +40,7 @@ void ActorWorkerThreadBase::start_with_params(_In_ uint32_t stack_word_count, _I
         stack_buffer,
         &task_ctrl_);
 
-    SACTOR_TRACE_ACTOR_WORKER_THREAD_STARTED(name_, this, task_);
+    SACTOR_TRACE_ACTOR_WORKER_THREAD_STARTED(this, task_);
 
     SACTOR_ENSURES(task_ != nullptr);
 }
@@ -48,7 +53,7 @@ void ActorWorkerThreadBase::actor_worker_task_proc(_In_ void* parameter)
 
 void ActorWorkerThreadBase::task_proc()
 {
-    SACTOR_TRACE_ACTOR_WORKER_THREAD_TASK_LOOP_ENTERED(name_, this);
+    SACTOR_TRACE_ACTOR_WORKER_THREAD_TASK_LOOP_ENTERED(this);
 
     for (;;) {
         SactorError result = mailbox_.rx().dispatch_one_message(on_message_, on_message_param_);

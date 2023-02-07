@@ -17,10 +17,12 @@ class ActorCommon
 
 public:
     void Start() {
-        SACTOR_TRACE_ACTOR_START(T::NAME, this);
+        SACTOR_TRACE_ACTOR_START(this);
         worker_.Start();
-        SACTOR_TRACE_ACTOR_STARTED(T::NAME, this);
+        SACTOR_TRACE_ACTOR_STARTED(this);
     }
+
+    constexpr const char* get_name() const { return T::NAME; }
 
     template <class MessageType>
     SactorError send_sync(_In_ const MessageType& message) {
@@ -42,7 +44,7 @@ protected:
         , worker_(mailbox, impl_)
     {
         impl_.mailbox_ = &mailbox;
-        SACTOR_TRACE_ACTOR_CREATED(T::NAME, this);
+        SACTOR_TRACE_ACTOR_CREATED(this);
     }
 };
 

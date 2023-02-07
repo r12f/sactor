@@ -69,7 +69,7 @@ SactorError ActorMailbox::Tx::send_recv_sync_raw(_In_ BaseType_t message_id, _In
 
 SactorError ActorMailbox::Tx::queue_request_raw(_In_ const MailboxItem& mailbox_item)
 {
-    SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(actor_name_, this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
+    SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
     return queue_.tx().send((void *)&mailbox_item);
 }
 
@@ -86,10 +86,10 @@ SactorError ActorMailbox::Rx::dispatch_one_message(_In_ OnMessageFunc on_message
         return result;
     }
 
-    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE(actor_name_, this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
+    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE(this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
     result = on_message(parameter, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
 
-    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(actor_name_, this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
+    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
     mailbox_item.mark_completed();
 
     return result;
@@ -101,7 +101,7 @@ ActorMailbox::ActorMailbox(_In_ const char* actor_name, _In_ uint8_t* queue_buff
     , tx_(actor_name, *this)
     , rx_(actor_name, *this)
 {
-    SACTOR_TRACE_ACTOR_MAILBOX_CREATED(actor_name, this);
+    SACTOR_TRACE_ACTOR_MAILBOX_CREATED(this);
 }
 
 const char* ActorMailbox::get_actor_name() const

@@ -21,92 +21,153 @@
 #define _Inout_ 
 #endif
 
-#ifndef SACTOR_TRACE_LOG
-    #ifdef SACTOR_ENABLE_TRACE_LOG
-        #define SACTOR_TRACE_LOG(Component, Name, Pointer, Format, ...) printf("[%8s][%15s @ %p] " Format "\n", Component, Name, (void*)Pointer, ##__VA_ARGS__)
+//
+// Logging
+//
+#ifndef SACTOR_LOG
+    #define SACTOR_LOG(Level, Component, Name, Pointer, Format, ...) printf("[%s][%8s][%15s @ %p] " Format "\n", Level, Component, Name, (void*)Pointer, ##__VA_ARGS__)
+#else
+    #define SACTOR_LOG(Level, Component, Name, Pointer, Format, ...)
+#endif
+
+#define SACTOR_LOG_LEVEL_NONE (0)
+#define SACTOR_LOG_LEVEL_FATAL (1)
+#define SACTOR_LOG_LEVEL_ERROR (2)
+#define SACTOR_LOG_LEVEL_WARN (3)
+#define SACTOR_LOG_LEVEL_INFO (4)
+#define SACTOR_LOG_LEVEL_DEBUG (5)
+#define SACTOR_LOG_LEVEL_VERBOSE (6)
+
+#ifndef SACTOR_LOG_LEVEL
+#define SACTOR_LOG_LEVEL SACTOR_LOG_LEVEL_DEBUG
+#endif
+
+#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_FATAL)
+    #ifndef SACTOR_LOGF
+        #define SACTOR_LOGF(Component, Name, Pointer, Format, ...) SACTOR_LOG("F", Component, Name, Pointer, Format, ##__VA_ARGS__)
     #else
-        #define SACTOR_TRACE_LOG(Component, Name, Pointer, Format, ...)
+        #define SACTOR_LOGF(Component, Name, Pointer, Format, ...)
+    #endif
+#endif
+
+#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_ERROR)
+    #ifndef SACTOR_LOGE
+        #define SACTOR_LOGE(Component, Name, Pointer, Format, ...) SACTOR_LOG("E", Component, Name, Pointer, Format, ##__VA_ARGS__)
+    #else
+        #define SACTOR_LOGE(Component, Name, Pointer, Format, ...)
+    #endif
+#endif
+
+#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_WARN)
+    #ifndef SACTOR_LOGW
+        #define SACTOR_LOGW(Component, Name, Pointer, Format, ...) SACTOR_LOG("W", Component, Name, Pointer, Format, ##__VA_ARGS__)
+    #else
+        #define SACTOR_LOGW(Component, Name, Pointer, Format, ...)
+    #endif
+#endif
+
+#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_INFO)
+    #ifndef SACTOR_LOGI
+        #define SACTOR_LOGI(Component, Name, Pointer, Format, ...) SACTOR_LOG("I", Component, Name, Pointer, Format, ##__VA_ARGS__)
+    #else
+        #define SACTOR_LOGI(Component, Name, Pointer, Format, ...)
+    #endif
+#endif
+
+#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_DEBUG)
+    #ifndef SACTOR_LOGD
+        #define SACTOR_LOGD(Component, Name, Pointer, Format, ...) SACTOR_LOG("D", Component, Name, Pointer, Format, ##__VA_ARGS__)
+    #else
+        #define SACTOR_LOGD(Component, Name, Pointer, Format, ...)
+    #endif
+#endif
+
+#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_VERBOSE)
+    #ifndef SACTOR_LOGV
+        #define SACTOR_LOGV(Component, Name, Pointer, Format, ...) SACTOR_LOG("V", Component, Name, Pointer, Format, ##__VA_ARGS__)
+    #else
+        #define SACTOR_LOGV(Component, Name, Pointer, Format, ...)
     #endif
 #endif
 
 //
 // Actor
 //
-#define SACTOR_TRACE_ACTOR_LOG(Name, Pointer, Format, ...) \
-    SACTOR_TRACE_LOG("Actor", Name, Pointer, Format, ##__VA_ARGS__)
+#define SACTOR_TRACE_ACTOR_LOG(Pointer, Format, ...) \
+    SACTOR_LOGD("Actor", Pointer->get_name(), Pointer, Format, ##__VA_ARGS__)
 
 #ifndef SACTOR_TRACE_ACTOR_CREATED
-#define SACTOR_TRACE_ACTOR_CREATED(Name, Pointer) \
-    SACTOR_TRACE_ACTOR_LOG(Name, Pointer, "Actor created.")
+#define SACTOR_TRACE_ACTOR_CREATED(Pointer) \
+    SACTOR_TRACE_ACTOR_LOG(Pointer, "Actor created.")
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_START
-#define SACTOR_TRACE_ACTOR_START(Name, Pointer) \
-    SACTOR_TRACE_ACTOR_LOG(Name, Pointer, "Starting actor.")
+#define SACTOR_TRACE_ACTOR_START(Pointer) \
+    SACTOR_TRACE_ACTOR_LOG(Pointer, "Starting actor.")
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_STARTED
-#define SACTOR_TRACE_ACTOR_STARTED(Name, Pointer) \
-    SACTOR_TRACE_ACTOR_LOG(Name, Pointer, "Actor started.")
+#define SACTOR_TRACE_ACTOR_STARTED(Pointer) \
+    SACTOR_TRACE_ACTOR_LOG(Pointer, "Actor started.")
 #endif
 
 //
 // Actor worker thread
 //
-#define SACTOR_TRACE_ACTOR_WORKER_LOG(Name, Pointer, Format, ...) \
-    SACTOR_TRACE_LOG("Worker", Name, Pointer, Format, ##__VA_ARGS__)
+#define SACTOR_TRACE_ACTOR_WORKER_LOG(Pointer, Format, ...) \
+    SACTOR_LOGD("Worker", Pointer->get_name(), Pointer, Format, ##__VA_ARGS__)
 
 #ifndef SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED
-#define SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED(Name, Pointer) \
-    SACTOR_TRACE_ACTOR_WORKER_LOG(Name, Pointer, "Actor worker thread created.")
+#define SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED(Pointer) \
+    SACTOR_TRACE_ACTOR_WORKER_LOG(Pointer, "Actor worker thread created.")
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_WORKER_THREAD_START
-#define SACTOR_TRACE_ACTOR_WORKER_THREAD_START(Name, Pointer) \
-    SACTOR_TRACE_ACTOR_WORKER_LOG(Name, Pointer, "Starting actor worker thread.")
+#define SACTOR_TRACE_ACTOR_WORKER_THREAD_START(Pointer) \
+    SACTOR_TRACE_ACTOR_WORKER_LOG(Pointer, "Starting actor worker thread.")
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_WORKER_THREAD_STARTED
-#define SACTOR_TRACE_ACTOR_WORKER_THREAD_STARTED(Name, Pointer, Handle) \
-    SACTOR_TRACE_ACTOR_WORKER_LOG(Name, Pointer, "Actor worker thread started: Handle = %p.", Handle)
+#define SACTOR_TRACE_ACTOR_WORKER_THREAD_STARTED(Pointer, Handle) \
+    SACTOR_TRACE_ACTOR_WORKER_LOG(Pointer, "Actor worker thread started: Handle = %p.", Handle)
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_WORKER_THREAD_TASK_LOOP_ENTERED
-#define SACTOR_TRACE_ACTOR_WORKER_THREAD_TASK_LOOP_ENTERED(Name, Pointer) \
-    SACTOR_TRACE_ACTOR_WORKER_LOG(Name, Pointer, "Actor worker thread task loop entered.")
+#define SACTOR_TRACE_ACTOR_WORKER_THREAD_TASK_LOOP_ENTERED(Pointer) \
+    SACTOR_TRACE_ACTOR_WORKER_LOG(Pointer, "Actor worker thread task loop entered.")
 #endif
 
 //
 // Actor mailbox
 //
-#define SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, Format, ...) \
-    SACTOR_TRACE_LOG("Mailbox", Name, Pointer, Format, ##__VA_ARGS__)
+#define SACTOR_TRACE_ACTOR_MAILBOX_LOG(Pointer, Format, ...) \
+    SACTOR_LOGD("Mailbox", Pointer->actor_name_, Pointer, Format, ##__VA_ARGS__)
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_CREATED
-#define SACTOR_TRACE_ACTOR_MAILBOX_CREATED(Name, Pointer) \
-    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, "Actor mailbox created.")
+#define SACTOR_TRACE_ACTOR_MAILBOX_CREATED(Pointer) \
+    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Pointer, "Actor mailbox created.")
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE
-#define SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(Name, Pointer, MessageId, MessageBuffer, ReplyBuffer) \
-    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, "Actor mailbox queuing message: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
+#define SACTOR_TRACE_ACTOR_MAILBOX_QUEUE_MESSAGE(Pointer, MessageId, MessageBuffer, ReplyBuffer) \
+    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Pointer, "Actor mailbox queuing message: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE
-#define SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE(Name, Pointer, MessageId, MessageBuffer, ReplyBuffer) \
-    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, "Actor mailbox on message: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
+#define SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE(Pointer, MessageId, MessageBuffer, ReplyBuffer) \
+    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Pointer, "Actor mailbox on message: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED
-#define SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(Name, Pointer, MessageId, MessageBuffer, ReplyBuffer) \
-    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Name, Pointer, "Actor mailbox on message completed: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
+#define SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(Pointer, MessageId, MessageBuffer, ReplyBuffer) \
+    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Pointer, "Actor mailbox on message completed: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
 #endif
 
 //
 // Delay message service
 //
 #define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, Format, ...) \
-    SACTOR_TRACE_LOG("DMS", "DMS", Pointer, Format, ##__VA_ARGS__)
+    SACTOR_LOGD("DMS", "DMS", Pointer, Format, ##__VA_ARGS__)
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATE
 #define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_CREATE(Pointer) \
@@ -159,7 +220,7 @@
 #define SACTOR_ASSERT(AssertType, cond) do { \
     bool r = (cond); \
     if (!r) { \
-        SACTOR_TRACE_LOG("Assert", AssertType, nullptr, "Assertion failed: %s", #cond); \
+        SACTOR_LOGD("Assert", AssertType, nullptr, "Assertion failed: %s", #cond); \
         configASSERT(false); \
     } \
 } while (0)
