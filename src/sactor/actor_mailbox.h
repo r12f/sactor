@@ -69,8 +69,8 @@ public:
 private:
     const char* actor_name_;
     StaticMessageQueue<MailboxItem> queue_;
-    typename ActorMailbox::Tx tx_;
-    typename ActorMailbox::Rx rx_;
+    ActorMailbox::Tx tx_;
+    ActorMailbox::Rx rx_;
 
 public:
     static const uint32_t ItemSize = sizeof(MailboxItem);

@@ -109,12 +109,12 @@ const char* ActorMailbox::get_actor_name() const
     return actor_name_;
 }
 
-typename ActorMailbox::Tx& ActorMailbox::tx()
+ActorMailbox::Tx& ActorMailbox::tx()
 {
     return tx_;
 }
 
-typename ActorMailbox::Rx& ActorMailbox::rx()
+ActorMailbox::Rx& ActorMailbox::rx()
 {
     return rx_;
 }

@@ -6,7 +6,7 @@
 class DelayMessageService
 {
     struct DelayMessageJob {
-        typename ActorMailbox::Tx* target;
+        ActorMailbox::Tx* target;
         BaseType_t message_id;
         TickType_t expiry_tick;
     };
