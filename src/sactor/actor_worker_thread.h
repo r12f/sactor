@@ -44,7 +44,7 @@ public:
         SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED(this);
     }
 
-    void Start() { 
+    void start() { 
         start_with_params(T::STACK_WORD_COUNT, stack_buffer_, T::PRIORITY);
         get_mailbox().tx().send_async(MESSAGE_ID_INIT);
     }

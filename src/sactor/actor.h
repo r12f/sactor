@@ -16,13 +16,14 @@ class ActorCommon
     ActorWorkerThread<T> worker_;
 
 public:
-    void Start() {
+    void start() {
         SACTOR_TRACE_ACTOR_START(this);
-        worker_.Start();
+        worker_.start();
         SACTOR_TRACE_ACTOR_STARTED(this);
     }
 
     constexpr const char* get_name() const { return T::NAME; }
+    T& get_impl() { return impl_; }
 
     template <class MessageType>
     SactorError send_sync(_In_ const MessageType& message) {

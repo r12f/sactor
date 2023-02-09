@@ -13,7 +13,7 @@ One big challenge of developing programs for small IoT devices is resource const
 There are a few ways to install sactor to your projects:
 
 1. Manually add Sactor as dependent in `lib_deps` of platformio.ini.
-2. Use PlatformIO Core cli to add Sactor as dependent: `pio pkg install --library "r12f/Sactor@^0.2.0"`
+2. Use PlatformIO Core cli to add Sactor as dependent: `pio pkg install --library "r12f/Sactor@^0.2.1"`
 3. Download the project as zip folder on github, then unzip it to your `lib` folder.
 4. Download the package from release page, and unzip it to your `lib` folder.
 5. Use `git submodule` to add this project as submodule under your `lib` folder.
@@ -139,8 +139,8 @@ Once they are done, in our main function, we can simply include the `actors.h` f
 #include "actors.h"
 
 extern "C" void app_main() {
-    hello.Start();
-    blinky.Start();
+    hello.start();
+    blinky.start();
 }
 ```
 
