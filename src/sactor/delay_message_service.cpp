@@ -195,7 +195,7 @@ void DelayMessageService::schedule_timer(_In_ TickType_t current_tick, _In_ bool
     }
 
     TickType_t new_deadline_tick = expiry_tick < current_tick ? 1 : (expiry_tick - current_tick);
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE(this, new_deadline_tick);
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE(this, new_deadline_tick * portTICK_PERIOD_MS);
     
     // Otherwise change the period and reset the timer.
     if (from_isr) {
@@ -211,7 +211,7 @@ void DelayMessageService::schedule_timer(_In_ TickType_t current_tick, _In_ bool
 
     scheduled_timer_tick_ = expiry_tick;
 
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED(this, new_deadline_tick);
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED(this, new_deadline_tick * portTICK_PERIOD_MS);
 }
 
 void DelayMessageService::stop_timer(_In_ bool from_isr)

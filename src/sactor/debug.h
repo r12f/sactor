@@ -225,12 +225,12 @@
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE
 #define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULE(Pointer, NewPeriod) \
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service scheduling timer: NewPeriod = %d ms.", (int)NewPeriod)
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service scheduling timer: NewPeriod = %d ms.", (int)(NewPeriod))
 #endif
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED
 #define SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_SCHEDULED(Pointer, NewPeriod) \
-    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service timer scheduled: NewPeriod = %d ms.", (int)NewPeriod)
+    SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOG(Pointer, "Delay message service timer scheduled: NewPeriod = %d ms.", (int)(NewPeriod))
 #endif
 
 #ifndef SACTOR_TRACE_DELAY_MESSAGE_SERVICE_TIMER_STOP
