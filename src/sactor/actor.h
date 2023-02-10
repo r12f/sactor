@@ -24,7 +24,7 @@ public:
 
     constexpr const char* name() const { return T::NAME; }
     T& impl() { return impl_; }
-    Tx& tx() { return mailbox_.tx(); }
+    ActorMailbox::Tx& tx() { return mailbox_.tx(); }
 
     template <class MessageType>
     SactorError send_sync(_In_ const MessageType& message) {

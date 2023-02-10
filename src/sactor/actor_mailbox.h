@@ -10,6 +10,7 @@ class ActorMailbox
         BaseType_t message_id;
         const void* message_buffer;
         void* reply_buffer;
+        volatile SactorError handler_result;
         volatile bool* completed;
         TaskHandle_t sender_task;
 

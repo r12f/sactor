@@ -9,6 +9,7 @@ ActorMailbox::MailboxItem::MailboxItem(_In_ BaseType_t message_id, _In_opt_ cons
     : message_id(message_id)
     , message_buffer(message_buffer)
     , reply_buffer(reply_buffer)
+    , handler_result(SactorError_NoError)
     , completed(completed)
     , sender_task(xTaskGetCurrentTaskHandle())
 {
@@ -64,7 +65,7 @@ SactorError ActorMailbox::Tx::send_recv_sync_raw(_In_ BaseType_t message_id, _In
 
     mailbox_item.wait_completed();
 
-    return result;
+    return mailbox_item.handler_result;
 }
 
 SactorError ActorMailbox::Tx::queue_request_raw(_In_ const MailboxItem& mailbox_item)
@@ -88,6 +89,7 @@ SactorError ActorMailbox::Rx::dispatch_one_message(_In_ OnMessageFunc on_message
 
     SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE(this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
     result = on_message(parameter, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
+    mailbox_item.handler_result = result;
 
     SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
     mailbox_item.mark_completed();
