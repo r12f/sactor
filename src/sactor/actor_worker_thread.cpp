@@ -17,7 +17,7 @@ ActorWorkerThreadBase::~ActorWorkerThreadBase()
     }
 }
 
-const char* ActorWorkerThreadBase::get_name() const
+const char* ActorWorkerThreadBase::name() const
 {
     return name_;
 }

@@ -22,8 +22,9 @@ public:
         SACTOR_TRACE_ACTOR_STARTED(this);
     }
 
-    constexpr const char* get_name() const { return T::NAME; }
-    T& get_impl() { return impl_; }
+    constexpr const char* name() const { return T::NAME; }
+    T& impl() { return impl_; }
+    Tx& tx() { return mailbox_.tx(); }
 
     template <class MessageType>
     SactorError send_sync(_In_ const MessageType& message) {

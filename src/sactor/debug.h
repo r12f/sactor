@@ -116,7 +116,7 @@
 //
 #ifndef SACTOR_TRACE_ACTOR_LOG
 #define SACTOR_TRACE_ACTOR_LOG(Pointer, Format, ...) \
-    SACTOR_LOGV("Actor", Pointer->get_name(), Pointer, Format, ##__VA_ARGS__)
+    SACTOR_LOGV("Actor", Pointer->name(), Pointer, Format, ##__VA_ARGS__)
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_CREATED
@@ -139,7 +139,7 @@
 //
 #ifndef SACTOR_TRACE_ACTOR_WORKER_LOG
 #define SACTOR_TRACE_ACTOR_WORKER_LOG(Pointer, Format, ...) \
-    SACTOR_LOGV("Worker", Pointer->get_name(), Pointer, Format, ##__VA_ARGS__)
+    SACTOR_LOGV("Worker", Pointer->name(), Pointer, Format, ##__VA_ARGS__)
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_WORKER_THREAD_CREATED
