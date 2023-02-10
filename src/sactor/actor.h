@@ -16,10 +16,11 @@ class ActorCommon
     ActorWorkerThread<T> worker_;
 
 public:
-    void start() {
+    SactorError start() {
         SACTOR_TRACE_ACTOR_START(this);
-        worker_.start();
-        SACTOR_TRACE_ACTOR_STARTED(this);
+        SactorError result = worker_.start();
+        SACTOR_TRACE_ACTOR_STARTED(this, result);
+        return result;
     }
 
     constexpr const char* name() const { return T::NAME; }

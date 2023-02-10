@@ -91,7 +91,7 @@ SactorError ActorMailbox::Rx::dispatch_one_message(_In_ OnMessageFunc on_message
     result = on_message(parameter, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
     mailbox_item.handler_result = result;
 
-    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(this, mailbox_item.message_id, mailbox_item.message_buffer, mailbox_item.reply_buffer);
+    SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(this, mailbox_item.message_id, mailbox_item.handler_result, mailbox_item.message_buffer, mailbox_item.reply_buffer);
     mailbox_item.mark_completed();
 
     return result;

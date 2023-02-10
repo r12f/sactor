@@ -130,8 +130,8 @@
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_STARTED
-#define SACTOR_TRACE_ACTOR_STARTED(Pointer) \
-    SACTOR_TRACE_ACTOR_LOG(Pointer, "Actor started.")
+#define SACTOR_TRACE_ACTOR_STARTED(Pointer, Result) \
+    SACTOR_TRACE_ACTOR_LOG(Pointer, "Actor started: Result = 0x%08x", Result)
 #endif
 
 //
@@ -186,8 +186,8 @@
 #endif
 
 #ifndef SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED
-#define SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(Pointer, MessageId, MessageBuffer, ReplyBuffer) \
-    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Pointer, "Actor mailbox on message completed: Id = %d, Buffer = %p, Reply = %p.", MessageId, MessageBuffer, ReplyBuffer)
+#define SACTOR_TRACE_ACTOR_MAILBOX_ON_MESSAGE_COMPLETED(Pointer, MessageId, HandlerResult, MessageBuffer, ReplyBuffer) \
+    SACTOR_TRACE_ACTOR_MAILBOX_LOG(Pointer, "Actor mailbox on message completed: Id = %d, HandlerResult = 0x%08x, Buffer = %p, Reply = %p.", MessageId, (int)HandlerResult, MessageBuffer, ReplyBuffer)
 #endif
 
 //
