@@ -27,6 +27,11 @@ enum SactorError {
     
     // Actor worker thread error
     SactorError_TaskStopped,
+
+    SactorError_InternalMax = 10000,
+
+    // Custom error starts here
+    SactorError_CustomErrorMin = SactorError_InternalMax,
 };
 
 #endif
