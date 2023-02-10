@@ -18,7 +18,7 @@
 
 #define DECLARE_MESSAGE_BEGIN(ActorType, MessageType) \
     struct MessageType { \
-        static const int Id = MessageId_ ## ActorType ## _ ## MessageType;
+        static const int ID = MessageId_ ## ActorType ## _ ## MessageType;
 
 #define DECLARE_MESSAGE_END() \
     };

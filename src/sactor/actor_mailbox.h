@@ -30,13 +30,13 @@ public:
         template <class MessageType>
         SactorError send_sync(_In_ const MessageType& message)
         {
-            return send_recv_sync_raw(MessageType::Id, &message, nullptr);
+            return send_recv_sync_raw(MessageType::ID, &message, nullptr);
         }
 
         template <class MessageType, class ReplyType>
         SactorError send_recv_sync(_In_ const MessageType& message, _Out_ ReplyType& reply)
         {
-            return send_recv_sync_raw(MessageType::Id, &message, reply);
+            return send_recv_sync_raw(MessageType::ID, &message, reply);
         }
 
         SactorError send_async(_In_ BaseType_t message_id);
