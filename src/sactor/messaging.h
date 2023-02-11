@@ -13,6 +13,9 @@
 #define DECLARE_MESSAGE_ID(ActorType, MessageType) \
     MESSAGE_ID(ActorType, MessageType),
 
+#define DECLARE_MESSAGE_ID_SECTION_START(ActorType, MessageType, MessageId) \
+    MESSAGE_ID(ActorType, MessageType) = MessageId,
+
 #define DECLARE_MESSAGE_ID_END() \
     };
 
@@ -37,7 +40,7 @@
 
 #define ON_MESSAGE(ActorType, HandlerFunc, MessageType, MessageReplyType) \
         case MESSAGE_ID(ActorType, MessageType): \
-            return this->HandlerFunc((const MessageType*)message), (MessageReplyType*)message_reply);
+            return this->HandlerFunc((const MessageType*)message, (MessageReplyType*)message_reply);
 
 #define ON_MESSAGE_NO_REPLY(ActorType, HandlerFunc, MessageType) \
         case MESSAGE_ID(ActorType, MessageType): \
