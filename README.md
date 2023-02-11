@@ -1,6 +1,6 @@
 # Sactor
 
-[![Platform.IO](https://img.shields.io/badge/platform.io-v0.2.0-orange)](https://registry.platformio.org/libraries/r12f/Sactor)
+[![Platform.IO](https://img.shields.io/badge/platform.io-v0.2.3-orange)](https://registry.platformio.org/libraries/r12f/Sactor)
 
 Sactor is a light-weighted actor model framework based on FreeRTOS, designed for small IoT devices such as MCUs.
 
@@ -13,7 +13,7 @@ One big challenge of developing programs for small IoT devices is resource const
 There are a few ways to install sactor to your projects:
 
 1. Manually add Sactor as dependent in `lib_deps` of platformio.ini.
-2. Use PlatformIO Core cli to add Sactor as dependent: `pio pkg install --library "r12f/Sactor@^0.2.1"`
+2. Use PlatformIO Core cli to add Sactor as dependent: `pio pkg install --library "r12f/Sactor@^0.2.3"`
 3. Download the project as zip folder on github, then unzip it to your `lib` folder.
 4. Download the package from release page, and unzip it to your `lib` folder.
 5. Use `git submodule` to add this project as submodule under your `lib` folder.
