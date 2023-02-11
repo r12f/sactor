@@ -48,7 +48,7 @@ SactorError DelayMessageService::queue_delayed_message(_In_ ActorMailbox& mailbo
 
     SACTOR_TRACE_DELAY_MESSAGE_SERVICE_DELAY_MESSAGE_QUEUE(this, mailbox.get_actor_name(), &mailbox, message_id, delay_in_ms);
 
-    if (xSemaphoreTake(jobs_lock_handle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS)) != pdTRUE) {
+    if (xSemaphoreTake(jobs_lock_handle_, pdMS_TO_TICKS(CONFIG_SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS)) != pdTRUE) {
         SACTOR_TRACE_DELAY_MESSAGE_SERVICE_LOCK_TAKE_TIMEOUT(this);
         return SactorError_Timeout;
     }
@@ -65,7 +65,7 @@ SactorError DelayMessageService::queue_delayed_message(_In_ ActorMailbox& mailbo
 
 SactorError DelayMessageService::queue_delayed_message_under_lock(_In_ ActorMailbox& mailbox, _In_ BaseType_t message_id, _In_ uint32_t delay_in_ms)
 {
-    if (job_count_ == SACTOR_DELAY_MESSAGE_SERVICE_MAX_ITEM_COUNT) {
+    if (job_count_ == CONFIG_SACTOR_DELAY_MESSAGE_SERVICE_MAX_ITEM_COUNT) {
         return SactorError_QueueFull;
     }
 
@@ -202,10 +202,10 @@ void DelayMessageService::schedule_timer(_In_ TickType_t current_tick, _In_ bool
         xTimerChangePeriodFromISR(timer_handle_, new_deadline_tick, nullptr);
         xTimerStartFromISR(timer_handle_, nullptr);
     } else {
-        BaseType_t result = xTimerChangePeriod(timer_handle_, new_deadline_tick, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
+        BaseType_t result = xTimerChangePeriod(timer_handle_, new_deadline_tick, pdMS_TO_TICKS(CONFIG_SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
         SACTOR_ENSURES(result == pdPASS);
 
-        result = xTimerStart(timer_handle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
+        result = xTimerStart(timer_handle_, pdMS_TO_TICKS(CONFIG_SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
         SACTOR_ENSURES(result == pdPASS);
     }
 
@@ -221,7 +221,7 @@ void DelayMessageService::stop_timer(_In_ bool from_isr)
     if (from_isr) {
         xTimerStopFromISR(timer_handle_, nullptr);
     } else {
-        BaseType_t result = xTimerStop(timer_handle_, pdMS_TO_TICKS(SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
+        BaseType_t result = xTimerStop(timer_handle_, pdMS_TO_TICKS(CONFIG_SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS));
         SACTOR_ENSURES(result == pdPASS);
     }
 

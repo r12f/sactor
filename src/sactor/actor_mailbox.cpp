@@ -82,7 +82,7 @@ ActorMailbox::Rx::Rx(_In_ const char* actor_name, _In_ ActorMailbox& mailbox)
 SactorError ActorMailbox::Rx::dispatch_one_message(_In_ OnMessageFunc on_message, _In_ void* parameter)
 {
     MailboxItem mailbox_item;
-    SactorError result = queue_.rx().receive(&mailbox_item, SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS);
+    SactorError result = queue_.rx().receive(&mailbox_item, CONFIG_SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS);
     if (result == SactorError_QueueEmpty) {
         return result;
     }

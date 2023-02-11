@@ -41,11 +41,11 @@
 #define SACTOR_LOG_LEVEL_DEBUG (5)
 #define SACTOR_LOG_LEVEL_VERBOSE (6)
 
-#ifndef SACTOR_LOG_LEVEL
-#define SACTOR_LOG_LEVEL SACTOR_LOG_LEVEL_VERBOSE
+#ifndef CONFIG_SACTOR_LOG_LEVEL
+#define CONFIG_SACTOR_LOG_LEVEL SACTOR_LOG_LEVEL_VERBOSE
 #endif
 
-#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_FATAL)
+#if (CONFIG_SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_FATAL)
     #ifndef SACTOR_LOGF
         #define SACTOR_LOGF(Component, Name, Pointer, Format, ...) SACTOR_LOG("F", Component, Name, Pointer, Format, ##__VA_ARGS__)
     #else
@@ -53,7 +53,7 @@
     #endif
 #endif
 
-#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_ERROR)
+#if (CONFIG_SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_ERROR)
     #ifndef SACTOR_LOGE
         #define SACTOR_LOGE(Component, Name, Pointer, Format, ...) SACTOR_LOG("E", Component, Name, Pointer, Format, ##__VA_ARGS__)
     #else
@@ -61,7 +61,7 @@
     #endif
 #endif
 
-#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_WARN)
+#if (CONFIG_SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_WARN)
     #ifndef SACTOR_LOGW
         #define SACTOR_LOGW(Component, Name, Pointer, Format, ...) SACTOR_LOG("W", Component, Name, Pointer, Format, ##__VA_ARGS__)
     #else
@@ -69,7 +69,7 @@
     #endif
 #endif
 
-#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_INFO)
+#if (CONFIG_SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_INFO)
     #ifndef SACTOR_LOGI
         #define SACTOR_LOGI(Component, Name, Pointer, Format, ...) SACTOR_LOG("I", Component, Name, Pointer, Format, ##__VA_ARGS__)
     #else
@@ -77,7 +77,7 @@
     #endif
 #endif
 
-#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_DEBUG)
+#if (CONFIG_SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_DEBUG)
     #ifndef SACTOR_LOGD
         #define SACTOR_LOGD(Component, Name, Pointer, Format, ...) SACTOR_LOG("D", Component, Name, Pointer, Format, ##__VA_ARGS__)
     #else
@@ -85,7 +85,7 @@
     #endif
 #endif
 
-#if (SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_VERBOSE)
+#if (CONFIG_SACTOR_LOG_LEVEL >= SACTOR_LOG_LEVEL_VERBOSE)
     #ifndef SACTOR_LOGV
         #define SACTOR_LOGV(Component, Name, Pointer, Format, ...) SACTOR_LOG("V", Component, Name, Pointer, Format, ##__VA_ARGS__)
     #else

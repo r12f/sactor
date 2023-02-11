@@ -1,0 +1,27 @@
+menu "Sactor settings"
+
+    config SACTOR_LOG_LEVEL
+        int "Sactor log level."
+        default 6
+        help
+            Sactor log level. 6 = Verbose, 0 = None.
+
+    config SACTOR_ACTOR_MAILBOX_QUEUE_RECEIVE_TIMEOUT_IN_MS
+        int "Actor mailbox queue receive timeout (ms)"
+        default 1000
+        help
+            Timeout of each actor trying to pull events from mailbox queue in milliseconds.
+
+    config SACTOR_DELAY_MESSAGE_SERVICE_MAX_ITEM_COUNT
+        int "Delay message service max item count"
+        default 64
+        help
+            The max number of delayed message request that delay message service stores.
+
+    config SACTOR_DELAY_MESSAGE_SERVICE_LOCK_WAIT_TIME_IN_MS
+        int "Max lock wait time when queueing delayed message (ms)"
+        default 100
+        help
+            Max lock wait time when queueing delayed message in milliseconds.
+
+endmenu

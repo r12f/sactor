@@ -15,7 +15,7 @@ class DelayMessageService
     TimerHandle_t timer_handle_;
     TickType_t scheduled_timer_tick_;
 
-    DelayMessageJob jobs_[SACTOR_DELAY_MESSAGE_SERVICE_MAX_ITEM_COUNT];
+    DelayMessageJob jobs_[CONFIG_SACTOR_DELAY_MESSAGE_SERVICE_MAX_ITEM_COUNT];
     int job_count_;
     StaticSemaphore_t jobs_lock_ctrl_;
     SemaphoreHandle_t jobs_lock_handle_;
