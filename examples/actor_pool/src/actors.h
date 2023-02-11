@@ -9,12 +9,8 @@ class ActorSchedulerImpl : public ActorImpl
 public:
     static constexpr const char* NAME = "ActorScheduler";
 
-    MESSAGE_MAP_BEGIN()
-        ON_INIT_MESSAGE(ActorSchedulerImpl, on_init)
-    MESSAGE_MAP_END()
-
-private:
-    SactorError on_init();
+protected:
+    SactorError on_init() override;
 };
 
 class ActorLedCtrlImpl : public ActorImpl

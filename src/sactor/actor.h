@@ -73,6 +73,7 @@ public:
     {}
 };
 
+// Also we are using virtual function in ActorImpl, we don't need a virtual dtor in the base class, since we will not call delete on base class at all.
 class ActorImpl
 {
     template <class T>
@@ -86,12 +87,31 @@ public:
     static constexpr UBaseType_t PRIORITY = 1;
     static constexpr BaseType_t QUEUE_SIZE = 10;
 
-    SactorError ProcessIncomingMessage(_In_ BaseType_t message_id, _In_opt_ void* message, _In_opt_ void* message_reply) {
-        return SactorError_NoError;
-    }
+    virtual SactorError ProcessIncomingMessage(_In_ BaseType_t message_id, _In_opt_ const void* message, _In_opt_ void* message_reply);
 
 protected:
+    virtual SactorError on_init();
+    virtual void on_quit();
+    virtual SactorError ProcessCustomerIncomingMessage(_In_ BaseType_t message_id, _In_opt_ const void* message, _In_opt_ void* message_reply);
+
     SactorError queue_delayed_message(_In_ BaseType_t message_id, _In_ uint32_t delay_in_ms);
+};
+
+class PollingActorImpl : public ActorImpl
+{
+    uint32_t polling_interval_in_ms_;
+
+public:
+    PollingActorImpl(_In_ uint32_t polling_interval_in_ms);
+
+    SactorError ProcessIncomingMessage(_In_ BaseType_t message_id, _In_opt_ const void* message, _In_opt_ void* message_reply) override;
+    
+protected:
+    SactorError on_init() override;
+    virtual void on_polling_timer();
+
+private:
+    void schedule_polling_timer();
 };
 
 #endif

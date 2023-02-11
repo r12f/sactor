@@ -3,9 +3,14 @@
 
 #include "sactor/common.h"
 
+// This can be used to help define your own internal message id range.
+#ifndef SACTOR_ACTOR_MESSAGE_ID_BASE
+#define SACTOR_ACTOR_MESSAGE_ID_BASE 0
+#endif
+
 #define DECLARE_MESSAGE_ID_BEGIN(ActorType) \
     enum ActorMessageId_ ## ActorType { \
-        ActorType ## _MessageId_Base = 0,
+        ActorType ## _MessageId_Base = SACTOR_ACTOR_MESSAGE_ID_BASE,
 
 #define MESSAGE_ID(ActorType, MessageType) \
     MessageId_ ## ActorType ## _ ## MessageType
@@ -27,16 +32,8 @@
     };
 
 #define MESSAGE_MAP_BEGIN() \
-    SactorError ProcessIncomingMessage(_In_ BaseType_t message_id, _In_opt_ const void* message, _In_opt_ void* message_reply) { \
+    SactorError ProcessCustomerIncomingMessage(_In_ BaseType_t message_id, _In_opt_ const void* message, _In_opt_ void* message_reply) override { \
         switch (message_id) {
-
-#define ON_INIT_MESSAGE(ActorType, HandlerFunc) \
-        case MESSAGE_ID_INIT: \
-            return this->HandlerFunc();
-
-#define ON_QUIT_MESSAGE(ActorType, HandlerFunc) \
-        case MESSAGE_ID_QUIT: \
-            return this->HandlerFunc();
 
 #define ON_MESSAGE(ActorType, HandlerFunc, MessageType, MessageReplyType) \
         case MESSAGE_ID(ActorType, MessageType): \
@@ -50,6 +47,10 @@
         case MESSAGE_ID(ActorType, MessageType): \
             return this->HandlerFunc();
 
+#define ON_MESSAGE_CUSTOM_PAYLOAD(ActorType, MessageType, HandlerFunc, MessaagePayloadType, MessageReplyType) \
+        case MESSAGE_ID(ActorType, MessageType): \
+            return this->HandlerFunc((const MessaagePayloadType*)message, (MessageReplyType*)message_reply);
+
 #define MESSAGE_MAP_END() \
         } \
         return SactorError_NoError; \
@@ -59,11 +60,7 @@
 // Inbox message IDs
 //
 #define MESSAGE_ID_INIT (-1)
-#define MESSAGE_INIT()  \
-    MESSAGE_ID_INIT, nullptr, nullptr
-
 #define MESSAGE_ID_QUIT (-2)
-#define MESSAGE_QUIT()  \
-    MESSAGE_ID_QUIT, nullptr, nullptr
+#define MESSAGE_ID_POLLING_TIMER (-3)
 
 #endif

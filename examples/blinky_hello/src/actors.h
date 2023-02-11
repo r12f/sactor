@@ -20,12 +20,8 @@ class ActorBlinkyImpl : public ActorImpl
 public:
     static constexpr const char* NAME = "ActorBlinky";
 
-    MESSAGE_MAP_BEGIN()
-        ON_INIT_MESSAGE(ActorBlinkyImpl, on_init)
-    MESSAGE_MAP_END()
-
-private:
-    SactorError on_init();
+protected:
+    SactorError on_init() override;
 };
 
 typedef Actor<ActorHelloImpl> ActorHello;

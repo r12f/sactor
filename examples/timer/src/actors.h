@@ -4,23 +4,18 @@
 #include "sactor.h"
 #include "actor_contacts.h"
 
-class ActorSchedulerImpl : public ActorImpl
+class ActorSchedulerImpl : public PollingActorImpl
 {
     bool is_on_;
 
 public:
     static constexpr const char* NAME = "ActorScheduler";
 
-    ActorSchedulerImpl() : is_on_(true) {}
-
-    MESSAGE_MAP_BEGIN()
-        ON_INIT_MESSAGE(ActorSchedulerImpl, on_init)
-        ON_MESSAGE_NO_PAYLOAD(ActorSchedulerImpl, on_schedule_timer, ScheduleTimerMessage)
-    MESSAGE_MAP_END()
+    ActorSchedulerImpl() : PollingActorImpl(1000), is_on_(true) {}
 
 private:
-    SactorError on_init();
-    SactorError on_schedule_timer();
+    SactorError on_init() override;
+    void on_polling_timer() override;
 };
 
 class ActorLedCtrlImpl : public ActorImpl

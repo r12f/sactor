@@ -14,18 +14,14 @@ SactorError ActorSchedulerImpl::on_init()
 {
     esp_rom_gpio_pad_select_gpio(LED_GPIO);
     gpio_set_direction(LED_GPIO, GPIO_MODE_OUTPUT);
-    queue_delayed_message(MESSAGE_ID(ActorSchedulerImpl, ScheduleTimerMessage), 1000);
-    return SactorError_NoError;
+    return PollingActorImpl::on_init();
 }
 
-SactorError ActorSchedulerImpl::on_schedule_timer()
+void ActorSchedulerImpl::on_polling_timer()
 {
     printf("Schedule LED status update: Status = %s\n", is_on_ ? "On" : "Off");
     actor_pool_mailbox.tx().send_sync(ControlMessage { LED_GPIO, is_on_ });
     is_on_ = !is_on_;
-
-    queue_delayed_message(MESSAGE_ID(ActorSchedulerImpl, ScheduleTimerMessage), 1000);
-    return SactorError_NoError;
 }
 
 SactorError ActorLedCtrlImpl::on_control(_In_ const ControlMessage* message)
