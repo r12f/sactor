@@ -40,6 +40,8 @@ public:
             return send_recv_sync_raw(MessageType::ID, &message, &reply);
         }
 
+        SactorError send_recv_sync_raw(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer);
+
         SactorError send_async(_In_ BaseType_t message_id);
 
     private:
@@ -47,7 +49,6 @@ public:
         friend class ActorMailbox;
         Tx(const char* actor_name, _In_ ActorMailbox& mailbox);
 
-        SactorError send_recv_sync_raw(_In_ BaseType_t message_id, _In_opt_ const void* message_buffer, _Out_opt_ void* reply_buffer);
         SactorError queue_request_raw(_In_ const MailboxItem& mailbox_item);
     };
 
