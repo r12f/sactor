@@ -23,7 +23,7 @@ SactorError ActorImpl::ProcessIncomingMessage(_In_ BaseType_t message_id, _In_op
         break;
     }
 
-    return SactorError_NoError;
+    return ProcessCustomerIncomingMessage(message_id, message, message_reply);
 }
 
 SactorError ActorImpl::ProcessCustomerIncomingMessage(_In_ BaseType_t message_id, _In_opt_ const void* message, _In_opt_ void* message_reply)
