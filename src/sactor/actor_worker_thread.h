@@ -46,7 +46,7 @@ public:
 
     SactorError start() { 
         start_with_params(T::STACK_WORD_COUNT, stack_buffer_, T::PRIORITY);
-        return get_mailbox().tx().send_async(MESSAGE_ID_INIT);
+        return get_mailbox().tx().send_recv_sync_raw(MESSAGE_ID_INIT, nullptr, nullptr);
     }
 
 private:
